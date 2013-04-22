@@ -1,0 +1,257 @@
+\hypertarget{group__period}{
+\subsection{Periodogram generation}
+\label{group__period}\index{Periodogram generation@{Periodogram generation}}
+}
+\subsubsection*{Defines}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{group__period_gae1f03252f094cf8180186c55a9fa635d}{SCARGLE\_\-SLOW}~0
+\begin{DoxyCompactList}\small\item\em A compiler flag controlling the strategy used for \hyperlink{group__period_ga86b0f84540eab7eb0793b5ba94899d1e}{lsThreshold()}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{group__period_ga2c64d467f67fa7f90f96617275e057a7}{kpftimes::lombScargle} (const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&times, const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&fluxes, const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&freq, \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&power)
+\begin{DoxyCompactList}\small\item\em Calculates the Lomb-\/Scargle periodogram for a time series. \end{DoxyCompactList}\item 
+double \hyperlink{group__period_ga86b0f84540eab7eb0793b5ba94899d1e}{kpftimes::lsThreshold} (const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&times, const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&freq, double fap, long nSims)
+\begin{DoxyCompactList}\small\item\em Calculates the significance threshold for a Lomb-\/Scargle periodogram. \end{DoxyCompactList}\item 
+void \hyperlink{group__period_gab3a488d98ed28a6723689f09b5d984fb}{kpftimes::lsNormalEdf} (const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&times, const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&freqs, \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&powers, \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&probs, long nSims)
+\begin{DoxyCompactList}\small\item\em Calculates the empirical distribution function of false peaks for a Lomb-\/Scargle periodogram. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsubsection{Define Documentation}
+\hypertarget{group__period_gae1f03252f094cf8180186c55a9fa635d}{
+\index{Periodogram generation@{Periodogram generation}!SCARGLE\_\-SLOW@{SCARGLE\_\-SLOW}}
+\index{SCARGLE\_\-SLOW@{SCARGLE\_\-SLOW}!Periodogram generation@{Periodogram generation}}
+\paragraph[{SCARGLE\_\-SLOW}]{\setlength{\rightskip}{0pt plus 5cm}\#define SCARGLE\_\-SLOW~0}}
+\label{group__period_gae1f03252f094cf8180186c55a9fa635d}
+
+
+A compiler flag controlling the strategy used for \hyperlink{group__period_ga86b0f84540eab7eb0793b5ba94899d1e}{lsThreshold()}. 
+
+If set to 0 or not set \mbox{[}the default\mbox{]}, \hyperlink{group__period_ga86b0f84540eab7eb0793b5ba94899d1e}{lsThreshold()} is optimized for speed at the expense of memory. If set to 1, it is instead optimized for memory use at the expense of speed. The default setting should perform better on all but the oldest systems.
+
+This flag is best set in the call to the compiler, rather than in the code itself. 
+
+\subsubsection{Function Documentation}
+\hypertarget{group__period_ga2c64d467f67fa7f90f96617275e057a7}{
+\index{Periodogram generation@{Periodogram generation}!lombScargle@{lombScargle}}
+\index{lombScargle@{lombScargle}!Periodogram generation@{Periodogram generation}}
+\paragraph[{lombScargle}]{\setlength{\rightskip}{0pt plus 5cm}void kpftimes::lombScargle (
+\begin{DoxyParamCaption}
+\item[{const {\bf DoubleVec} \&}]{times, }
+\item[{const {\bf DoubleVec} \&}]{fluxes, }
+\item[{const {\bf DoubleVec} \&}]{freq, }
+\item[{{\bf DoubleVec} \&}]{power}
+\end{DoxyParamCaption}
+)}}
+\label{group__period_ga2c64d467f67fa7f90f96617275e057a7}
+
+
+Calculates the Lomb-\/Scargle periodogram for a time series. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em times} & Times at which data were taken \\
+\hline
+\mbox{\tt in}  & {\em fluxes} & Flux measurements of a source \\
+\hline
+\mbox{\tt in}  & {\em freq} & The frequency grid over which the periodogram should be calculated. See \hyperlink{group__grid_ga591c0083b481ff4bbae69be4f33318ef}{freqGen()} for a quick way to generate a grid. \\
+\hline
+\mbox{\tt out}  & {\em power} & The periodogram power at each frequency.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyPrecond}{Precondition}
+times contains at least two unique values 
+
+times is sorted in ascending order 
+
+fluxes is of the same length as times 
+
+fluxes has at least two unique values 
+
+fluxes\mbox{[}i\mbox{]} is the flux of the source at times\mbox{[}i\mbox{]}, for all i 
+
+all elements of freq are $>$= 0 
+\end{DoxyPrecond}
+\begin{DoxyPostcond}{Postcondition}
+power is of the same length as freq 
+
+power\mbox{[}i\mbox{]} is the Lomb-\/Scargle periodogram evaluated at freq\mbox{[}i\mbox{]}, for all i 
+\end{DoxyPostcond}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em domain\_\-error} & Thrown if negative frequencies are provided \\
+\hline
+{\em invalid\_\-argument} & Thrown if any of the preconditions on the format of times or fluxes are violated.\\
+\hline
+\end{DoxyExceptions}
+\begin{DoxyParagraph}{Performance:}
+O(times.size() × freq.size()) time 
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{}
+O(times.size() + freq.size()) memory
+\end{DoxyParagraph}
+\begin{Desc}
+\item[\hyperlink{todo__todo000007}{Todo}]Find a faster algorithm 
+
+Optimize for multiple calls with similar \mbox{[}but not identical\mbox{]} values of times and freq, as would happen in a large survey where some epochs of some stars are removed for technical reasons. 
+
+Verify that input validation is worth the cost \end{Desc}
+\hypertarget{group__period_gab3a488d98ed28a6723689f09b5d984fb}{
+\index{Periodogram generation@{Periodogram generation}!lsNormalEdf@{lsNormalEdf}}
+\index{lsNormalEdf@{lsNormalEdf}!Periodogram generation@{Periodogram generation}}
+\paragraph[{lsNormalEdf}]{\setlength{\rightskip}{0pt plus 5cm}void kpftimes::lsNormalEdf (
+\begin{DoxyParamCaption}
+\item[{const {\bf DoubleVec} \&}]{times, }
+\item[{const {\bf DoubleVec} \&}]{freqs, }
+\item[{{\bf DoubleVec} \&}]{powers, }
+\item[{{\bf DoubleVec} \&}]{probs, }
+\item[{long}]{nSims}
+\end{DoxyParamCaption}
+)}}
+\label{group__period_gab3a488d98ed28a6723689f09b5d984fb}
+
+
+Calculates the empirical distribution function of false peaks for a Lomb-\/Scargle periodogram. 
+
+This function is a generalization of \hyperlink{group__period_ga86b0f84540eab7eb0793b5ba94899d1e}{lsThreshold()}.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em times} & Times at which data were taken \\
+\hline
+\mbox{\tt in}  & {\em freqs} & The frequency grid over which the periodogram was calculated. \\
+\hline
+\mbox{\tt out}  & {\em powers} & The power levels at which the EDF is measured \\
+\hline
+\mbox{\tt out}  & {\em probs} & probs\mbox{[}i\mbox{]} contains the estimated probability that a periodogram calculated from white noise has a peak less than or equal to powers\mbox{[}i\mbox{]} \\
+\hline
+\mbox{\tt in}  & {\em nSims} & Number of white noise simulations to find the EDF.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyPrecond}{Precondition}
+times contains at least two unique values 
+
+times is sorted in ascending order 
+
+all elements of freq are $>$= 0 
+
+nSims $>$$>$ 1 
+\end{DoxyPrecond}
+\begin{DoxyPostcond}{Postcondition}
+powers.size() == probs.size() == nSims 
+
+powers is sorted in ascending order 
+
+probs is sorted in ascending order 
+
+powers and probs represent an empirical distribution function, such that probs\mbox{[}i\mbox{]} = EDF(powers\mbox{[}i\mbox{]}). The EDF is that of the peak power level observed in the periodograms of observations of an uncorrelated Gaussian noise source, if the uncorrelated source is sampled at the cadence represented by times and the periodogram is measured at frequencies freq.
+\end{DoxyPostcond}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em domain\_\-error} & Thrown if negative frequencies or nonpositive nSims are provided. \\
+\hline
+{\em invalid\_\-argument} & Thrown if the preconditions on the format of times are violated.\\
+\hline
+\end{DoxyExceptions}
+\begin{DoxyParagraph}{Performance:}
+O(times.size() × freq.size() × nSims) time 
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{}
+O(times.size() × freq.size()) memory by default, or O(times.size() + freq.size()) memory if SCARGLE\_\-SLOW is set
+\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+The intended use is that lsRandomEdf() will accompany a call, or multiple calls, to \hyperlink{group__period_ga2c64d467f67fa7f90f96617275e057a7}{lombScargle()} with the same values of times and freq. Although lsRandomEdf() is optimized for multiple calculations to a degree that lombScargle() cannot, it will still run roughly nSims/10 times longer than lombScargle() itself. Don't run it after every real periodogram!
+\end{DoxyRemark}
+\begin{Desc}
+\item[\hyperlink{test__test000001}{Test}]A 1-\/element time series and nSims = 100. Expected behavior = throw invalid\_\-argument 
+
+A 2-\/element time series, sorted with no duplicates, and nSims = 100. Expected behavior = matches result of running lombScargle 100 times. 
+
+A 2-\/element time series, sorted with duplicates, and nSims = 100. Expected behavior = throw invalid\_\-argument 
+
+A 2-\/element time series, unsorted, and nSims = 100. Expected behavior = throw invalid\_\-argument. 
+
+A 100-\/element nonuniformly sampled time series, sorted with no duplicates, and negative frequencies. Expected behavior = throw domain\_\-error. 
+
+A 100-\/element nonuniformly sampled time series, sorted with no duplicates, and multiple zero frequencies. Expected behavior = matches result of running lombScargle 100 times. 
+
+A 100-\/element uniformly sampled time series, sorted with no duplicates, and nSims = 100. Expected behavior = matches result of running lombScargle 100 times. 
+
+A 100-\/element nonuniformly sampled time series, sorted with no duplicates, and nSims = 100. Expected behavior = matches result of running lombScargle 100 times. 
+
+A 100-\/element nonuniformly sampled time series, sorted with no duplicates, and nSims = 0. Expected behavior = throw domain\_\-error. 
+
+A 100-\/element nonuniformly sampled time series, sorted with no duplicates, and nSims = 1. Expected behavior = (probs = 1.0, powers = undefined) 
+
+A 100-\/element nonuniformly sampled time series, sorted with duplicates, and nSims = 100. Expected behavior = matches result of running lombScargle 100 times. 
+
+A 100-\/element nonuniformly sampled time series, unsorted. Expected behavior = throw invalid\_\-argument. \end{Desc}
+\hypertarget{group__period_ga86b0f84540eab7eb0793b5ba94899d1e}{
+\index{Periodogram generation@{Periodogram generation}!lsThreshold@{lsThreshold}}
+\index{lsThreshold@{lsThreshold}!Periodogram generation@{Periodogram generation}}
+\paragraph[{lsThreshold}]{\setlength{\rightskip}{0pt plus 5cm}double kpftimes::lsThreshold (
+\begin{DoxyParamCaption}
+\item[{const {\bf DoubleVec} \&}]{times, }
+\item[{const {\bf DoubleVec} \&}]{freq, }
+\item[{double}]{fap, }
+\item[{long}]{nSims}
+\end{DoxyParamCaption}
+)}}
+\label{group__period_ga86b0f84540eab7eb0793b5ba94899d1e}
+
+
+Calculates the significance threshold for a Lomb-\/Scargle periodogram. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em times} & Times at which data were taken \\
+\hline
+\mbox{\tt in}  & {\em freq} & The frequency grid over which the periodogram was calculated. \\
+\hline
+\mbox{\tt in}  & {\em fap} & Desired false alarm probability \\
+\hline
+\mbox{\tt in}  & {\em nSims} & Number of white noise simulations to find the FAP power level.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The peak power level that will be reached, with probability fap, in a periodogram of white noise.
+\end{DoxyReturn}
+\begin{DoxyPrecond}{Precondition}
+times contains at least two unique values 
+
+times is sorted in ascending order 
+
+all elements of freq are $>$= 0 
+
+0 $<$ fap $<$ 1 
+
+nSims $>$= 1 
+
+fap × nSims $>$$>$ 1 
+\end{DoxyPrecond}
+\begin{DoxyPostcond}{Postcondition}
+The function returns the peak power level observed in the periodograms of (1-\/fap) of observations of an uncorrelated Gaussian noise source, if the uncorrelated source is sampled at the cadence represented by times and the periodogram is measured at frequencies freq. 
+\end{DoxyPostcond}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em domain\_\-error} & Thrown if negative frequencies, fap, or nSims are provided. \\
+\hline
+{\em invalid\_\-argument} & Thrown if any of the preconditions on the format of times or the values of fap and nSims are violated.\\
+\hline
+\end{DoxyExceptions}
+\begin{DoxyParagraph}{Performance:}
+O(times.size() × freq.size() × nSims) time 
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{}
+O(times.size() × freq.size()) memory by default, or O(times.size() + freq.size()) memory if SCARGLE\_\-SLOW is set
+\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+The intended use is that lsThreshold() will accompany a call, or multiple calls, to \hyperlink{group__period_ga2c64d467f67fa7f90f96617275e057a7}{lombScargle()} with the same values of times and freq. Although lsThreshold() is optimized for multiple calculations to a degree that lombScargle() cannot, it will still run roughly nSims/10 times longer than lombScargle() itself. Don't run it after every real periodogram!
+
+The significance threshold is a strong function of the observing cadence (times), and a weaker function of the frequency grid (freq). The latter dependence arises because in finer grids a (random or observed) periodogram peak is more likely to be sampled close to its maximum value.
+\end{DoxyRemark}
+\begin{Desc}
+\item[\hyperlink{todo__todo000008}{Todo}]Test the performance advantage AFTER refactoring 
+
+Verify that input validation is worth the cost \end{Desc}

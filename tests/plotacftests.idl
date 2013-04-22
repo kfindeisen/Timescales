@@ -1,0 +1,48 @@
+; plotacftests.idl
+; by Krzysztof Findeisen
+; Created July 15, 2011
+; Last modified July 15, 2011
+
+set_plot, 'ps'
+@printableplots.idl
+
+NPLOTS = 5
+
+device, file='plotacftests.ps', xoffset=0.75, yoffset=0.75, xsize=7.0, ysize=9.5, /inches
+!p.multi = [0, 1, NPLOTS]
+
+;---------------------------------------
+
+readcol, 'flux.sine001.csv', format='(F,F)', time, flux
+plot, time, flux, xtitle='Time', ytitle='Flux', title='SNR 100'
+
+readcol, 'flux.sine01.csv',  format='(F,F)', time, flux
+plot, time, flux, xtitle='Time', ytitle='Flux', title='SNR 10'
+
+readcol, 'flux.sine05.csv',  format='(F,F)', time, flux
+plot, time, flux, xtitle='Time', ytitle='Flux', title='SNR 2'
+
+readcol, 'flux.sine1.csv',   format='(F,F)', time, flux
+plot, time, flux, xtitle='Time', ytitle='Flux', title='SNR 1'
+
+readcol, 'flux.sine2.csv',   format='(F,F)', time, flux
+plot, time, flux, xtitle='Time', ytitle='Flux', title='SNR 0.5'
+
+;---------------------------------------
+
+readcol, 'acf.noise001.csv', format='(F,F)', offset, acf
+plot, offset, acf, yrange=[-1.0, 1.0], xtitle='Offset', ytitle='ACF', title='SNR 100'
+
+readcol, 'acf.noise01.csv',  format='(F,F)', offset, acf
+plot, offset, acf, yrange=[-1.0, 1.0], xtitle='Offset', ytitle='ACF', title='SNR 10'
+
+readcol, 'acf.noise05.csv',  format='(F,F)', offset, acf
+plot, offset, acf, yrange=[-1.0, 1.0], xtitle='Offset', ytitle='ACF', title='SNR 2'
+
+readcol, 'acf.noise1.csv',   format='(F,F)', offset, acf
+plot, offset, acf, yrange=[-1.0, 1.0], xtitle='Offset', ytitle='ACF', title='SNR 1'
+
+readcol, 'acf.noise2.csv',   format='(F,F)', offset, acf
+plot, offset, acf, yrange=[-1.0, 1.0], xtitle='Offset', ytitle='ACF', title='SNR 0.5'
+
+device, /close_file

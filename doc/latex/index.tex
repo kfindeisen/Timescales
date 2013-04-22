@@ -1,0 +1,22 @@
+\hypertarget{index_intro}{}\subsection{Introduction}\label{index_intro}
+The Timescales library provides basic functions for lightcurve analysis. The target application is automated reduction of large time-\/series data sets.
+
+The library is organized as a series of global functions under the kpftimes namespace, rather than as an object heirarchy. This architecture was chosen in part for its efficiency (i.e. avoiding the memory overhead of constructing objects to represent each periodogram or other function), but mainly for its simplicity. Each function performs a single, narrowly defined task, making it (hopefully!) easy to chain functions together into pipelines.\hypertarget{index_metahelp}{}\subsection{About this Documentation}\label{index_metahelp}
+
+
+ 
+ New users will find the Module Documentation chapter the best 
+ starting point for learning about the Timescales API. There they will find 
+ a list of the main functions in the library, organized by category. The 
+ other chapters are more useful for people seeking to understand the code 
+ itself.
+ \hypertarget{index_install}{}\subsection{Installation and Use}\label{index_install}
+Timescales itself should compile on any UNIX-\/like system. In many cases you need simply unpack the .tar contents into the appropriate directory, run {\ttfamily make}, and move libtimescales.a into a directory of your choice. If you do not use GCC, you may need to edit the makefile before you can build the library.
+
+To use Timescales, include {\ttfamily $<$\hyperlink{timescales_8h}{timescales.h}$>$} in your source code (see examples/example.cpp). Timescales relies on the GNU Scientific Library (\href{http://www.gnu.org/software/gsl/}{\tt GSL}) for some of its more complex mathematics, so you must link your program with {\itshape both\/} Timescales and GSL for it to run correctly. Check with your system administrator if you're not sure whether GSL is available on your machine.\hypertarget{index_changelog}{}\subsection{Recent changes}\label{index_changelog}
+\hypertarget{index_v022}{}\subsubsection{0.2.2}\label{index_v022}
+\begin{DoxyItemize}
+\item Removed exception specifications from all functions \item Added delMDelT()\end{DoxyItemize}
+\hypertarget{index_v021}{}\subsubsection{0.2.1}\label{index_v021}
+\begin{DoxyItemize}
+\item Added \hyperlink{group__acf_ga3abd7e8a3ae34d649c1fb03512ad93f2}{acWindow()} \item Added \hyperlink{group__period_gab3a488d98ed28a6723689f09b5d984fb}{lsNormalEdf()} \end{DoxyItemize}

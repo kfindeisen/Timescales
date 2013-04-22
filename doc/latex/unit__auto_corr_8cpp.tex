@@ -1,0 +1,83 @@
+\hypertarget{unit__auto_corr_8cpp}{
+\subsection{tests/unit\_\-autoCorr.cpp File Reference}
+\label{unit__auto_corr_8cpp}\index{tests/unit\_\-autoCorr.cpp@{tests/unit\_\-autoCorr.cpp}}
+}
+
+
+Performs unit testing of the function \hyperlink{group__acf_gabbd381218252378ba3c999f49b10f522}{kpftimes::autoCorr()}  
+
+
+\subsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \hyperlink{unit__auto_corr_8cpp_ad590941f1fb2337685feb70b450bf25d}{testAcf} (const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&times, const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&fluxes, const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&offsets, bool expectInvalid, const std::string \&outFile)  throw ()
+\begin{DoxyCompactList}\small\item\em Carries out a generic test of the \hyperlink{group__acf_gabbd381218252378ba3c999f49b10f522}{autoCorr()} function. \end{DoxyCompactList}\item 
+void \hyperlink{unit__auto_corr_8cpp_aa685dda182277dbc13fa9109431c9396}{runAutoCorrTests} ()
+\begin{DoxyCompactList}\small\item\em Runs all test cases defined for \hyperlink{group__acf_gabbd381218252378ba3c999f49b10f522}{autoCorr()}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsubsection{Detailed Description}
+Performs unit testing of the function \hyperlink{group__acf_gabbd381218252378ba3c999f49b10f522}{kpftimes::autoCorr()} \begin{DoxyAuthor}{Author}
+Krzysztof Findeisen 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+Created July 15, 2011 
+
+Last modified July 15, 2011 
+\end{DoxyDate}
+
+
+\subsubsection{Function Documentation}
+\hypertarget{unit__auto_corr_8cpp_aa685dda182277dbc13fa9109431c9396}{
+\index{unit\_\-autoCorr.cpp@{unit\_\-autoCorr.cpp}!runAutoCorrTests@{runAutoCorrTests}}
+\index{runAutoCorrTests@{runAutoCorrTests}!unit_autoCorr.cpp@{unit\_\-autoCorr.cpp}}
+\paragraph[{runAutoCorrTests}]{\setlength{\rightskip}{0pt plus 5cm}void runAutoCorrTests (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{unit__auto_corr_8cpp_aa685dda182277dbc13fa9109431c9396}
+
+
+Runs all test cases defined for \hyperlink{group__acf_gabbd381218252378ba3c999f49b10f522}{autoCorr()}. 
+
+Results are printed to stdout. \hypertarget{unit__auto_corr_8cpp_ad590941f1fb2337685feb70b450bf25d}{
+\index{unit\_\-autoCorr.cpp@{unit\_\-autoCorr.cpp}!testAcf@{testAcf}}
+\index{testAcf@{testAcf}!unit_autoCorr.cpp@{unit\_\-autoCorr.cpp}}
+\paragraph[{testAcf}]{\setlength{\rightskip}{0pt plus 5cm}bool testAcf (
+\begin{DoxyParamCaption}
+\item[{const {\bf DoubleVec} \&}]{times, }
+\item[{const {\bf DoubleVec} \&}]{fluxes, }
+\item[{const {\bf DoubleVec} \&}]{offsets, }
+\item[{bool}]{expectInvalid, }
+\item[{const std::string \&}]{outFile}
+\end{DoxyParamCaption}
+)  throw ()}}
+\label{unit__auto_corr_8cpp_ad590941f1fb2337685feb70b450bf25d}
+
+
+Carries out a generic test of the \hyperlink{group__acf_gabbd381218252378ba3c999f49b10f522}{autoCorr()} function. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em times} & The times array to be passed to \hyperlink{group__acf_gabbd381218252378ba3c999f49b10f522}{autoCorr()}. \\
+\hline
+\mbox{\tt in}  & {\em fluxes} & The flux array to be passed to \hyperlink{group__acf_gabbd381218252378ba3c999f49b10f522}{autoCorr()}. \\
+\hline
+\mbox{\tt in}  & {\em offsets} & The offset array to be passed to \hyperlink{group__acf_gabbd381218252378ba3c999f49b10f522}{autoCorr()}.\\
+\hline
+\mbox{\tt in}  & {\em expectInvalid} & Whether the correct behavior is throwing a $\backslash$ invalid\_\-argument exception.\\
+\hline
+\mbox{\tt in}  & {\em outFile} & The name of the file to which to print the ACF. No printing if empty string.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if test passed, false if test failed 
+\end{DoxyReturn}
+
+
+\begin{DoxyWarning}{Warning}
+: missing automated oracle for ACFs
+\end{DoxyWarning}
+
+

@@ -1,0 +1,85 @@
+\hypertarget{unit__ls_normal_edf_8cpp}{
+\subsection{tests/unit\_\-lsNormalEdf.cpp File Reference}
+\label{unit__ls_normal_edf_8cpp}\index{tests/unit\_\-lsNormalEdf.cpp@{tests/unit\_\-lsNormalEdf.cpp}}
+}
+
+
+Performs unit testing of the function \hyperlink{group__period_gab3a488d98ed28a6723689f09b5d984fb}{kpftimes::lsNormalEdf()}  
+
+
+\subsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \hyperlink{unit__ls_normal_edf_8cpp_a90c9a6238d8f2a9c1d71cffc25916a56}{testEdf} (const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&times, const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&freqs, int nSims, bool expectInvalid, bool expectDomain)  throw ()
+\begin{DoxyCompactList}\small\item\em Carries out a generic test of the \hyperlink{group__period_gab3a488d98ed28a6723689f09b5d984fb}{lsNormalEdf()} function. \end{DoxyCompactList}\item 
+void \hyperlink{unit__ls_normal_edf_8cpp_a9b16d484740b3e06d5b8e5058f925b36}{runLsNormalEdfTests} ()
+\begin{DoxyCompactList}\small\item\em Runs all test cases defined for \hyperlink{group__period_gab3a488d98ed28a6723689f09b5d984fb}{lsNormalEdf()}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsubsection{Detailed Description}
+Performs unit testing of the function \hyperlink{group__period_gab3a488d98ed28a6723689f09b5d984fb}{kpftimes::lsNormalEdf()} \begin{DoxyAuthor}{Author}
+Krzysztof Findeisen 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+Created May 19, 2011 
+
+Last modified May 24, 2011 
+\end{DoxyDate}
+
+
+\subsubsection{Function Documentation}
+\hypertarget{unit__ls_normal_edf_8cpp_a9b16d484740b3e06d5b8e5058f925b36}{
+\index{unit\_\-lsNormalEdf.cpp@{unit\_\-lsNormalEdf.cpp}!runLsNormalEdfTests@{runLsNormalEdfTests}}
+\index{runLsNormalEdfTests@{runLsNormalEdfTests}!unit_lsNormalEdf.cpp@{unit\_\-lsNormalEdf.cpp}}
+\paragraph[{runLsNormalEdfTests}]{\setlength{\rightskip}{0pt plus 5cm}void runLsNormalEdfTests (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{unit__ls_normal_edf_8cpp_a9b16d484740b3e06d5b8e5058f925b36}
+
+
+Runs all test cases defined for \hyperlink{group__period_gab3a488d98ed28a6723689f09b5d984fb}{lsNormalEdf()}. 
+
+Results are printed to stdout. \hypertarget{unit__ls_normal_edf_8cpp_a90c9a6238d8f2a9c1d71cffc25916a56}{
+\index{unit\_\-lsNormalEdf.cpp@{unit\_\-lsNormalEdf.cpp}!testEdf@{testEdf}}
+\index{testEdf@{testEdf}!unit_lsNormalEdf.cpp@{unit\_\-lsNormalEdf.cpp}}
+\paragraph[{testEdf}]{\setlength{\rightskip}{0pt plus 5cm}bool testEdf (
+\begin{DoxyParamCaption}
+\item[{const {\bf DoubleVec} \&}]{times, }
+\item[{const {\bf DoubleVec} \&}]{freqs, }
+\item[{int}]{nSims, }
+\item[{bool}]{expectInvalid, }
+\item[{bool}]{expectDomain}
+\end{DoxyParamCaption}
+)  throw ()}}
+\label{unit__ls_normal_edf_8cpp_a90c9a6238d8f2a9c1d71cffc25916a56}
+
+
+Carries out a generic test of the \hyperlink{group__period_gab3a488d98ed28a6723689f09b5d984fb}{lsNormalEdf()} function. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em times} & The times array to be passed to \hyperlink{group__period_gab3a488d98ed28a6723689f09b5d984fb}{lsNormalEdf()}. \\
+\hline
+\mbox{\tt in}  & {\em freqs} & The frequency array to be passed to \hyperlink{group__period_gab3a488d98ed28a6723689f09b5d984fb}{lsNormalEdf()}. \\
+\hline
+\mbox{\tt in}  & {\em nSims} & The number of simulations to request of \hyperlink{group__period_gab3a488d98ed28a6723689f09b5d984fb}{lsNormalEdf()}. \\
+\hline
+\mbox{\tt in}  & {\em expectInvalid} & Whether the correct behavior is throwing a $\backslash$ invalid\_\-argument exception. May be set simultaneously with expectDomain, in which case catching either invalid\_\-argument or domain\_\-behavior is considered correct behavior. \\
+\hline
+\mbox{\tt in}  & {\em expectDomain} & Whether the correct behavior is throwing a $\backslash$ domain\_\-error exception. May be set simultaneously with expectInvalid, in which case catching either invalid\_\-argument or domain\_\-behavior is considered correct behavior.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if test passed, false if test failed 
+\end{DoxyReturn}
+
+
+Compare highestPeak to powers in a statistical sense. For now, do this by visual inspection of plots. Eventually we want to implement a KS or (preferably) AD test to automate the comparison. GSL doesn't have either, believe it or not.
+
+\begin{DoxyWarning}{Warning}
+: missing automated oracle for EDFs
+\end{DoxyWarning}
+
+

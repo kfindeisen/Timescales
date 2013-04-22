@@ -1,0 +1,247 @@
+\hypertarget{group__acf}{
+\subsection{Autocorrelation function generation}
+\label{group__acf}\index{Autocorrelation function generation@{Autocorrelation function generation}}
+}
+\subsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{group__acf_gabbd381218252378ba3c999f49b10f522}{kpftimes::autoCorr} (const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&times, const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&fluxes, const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&offsets, \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&acf)
+\begin{DoxyCompactList}\small\item\em Calculates the autocorrelation function for a time series. \end{DoxyCompactList}\item 
+void \hyperlink{group__acf_gae1a0defc2c251ed147a33877081ba7d7}{kpftimes::autoCorr} (const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&times, const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&fluxes, const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&offsets, \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&acf, double maxFreq)
+\begin{DoxyCompactList}\small\item\em Calculates the autocorrelation function for a time series. \end{DoxyCompactList}\item 
+void \hyperlink{group__acf_ga3abd7e8a3ae34d649c1fb03512ad93f2}{kpftimes::acWindow} (const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&times, const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&offsets, \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&wf)
+\begin{DoxyCompactList}\small\item\em Calculates the autocorrelation window function for a time sampling. \end{DoxyCompactList}\item 
+void \hyperlink{group__acf_ga4eb6462c49b267c2f9e43d873efc91a5}{kpftimes::acWindow} (const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&times, const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&offsets, \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&wf, double maxFreq)
+\begin{DoxyCompactList}\small\item\em Calculates the autocorrelation window function for a time sampling. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsubsection{Function Documentation}
+\hypertarget{group__acf_ga3abd7e8a3ae34d649c1fb03512ad93f2}{
+\index{Autocorrelation function generation@{Autocorrelation function generation}!acWindow@{acWindow}}
+\index{acWindow@{acWindow}!Autocorrelation function generation@{Autocorrelation function generation}}
+\paragraph[{acWindow}]{\setlength{\rightskip}{0pt plus 5cm}void kpftimes::acWindow (
+\begin{DoxyParamCaption}
+\item[{const {\bf DoubleVec} \&}]{times, }
+\item[{const {\bf DoubleVec} \&}]{offsets, }
+\item[{{\bf DoubleVec} \&}]{wf}
+\end{DoxyParamCaption}
+)}}
+\label{group__acf_ga3abd7e8a3ae34d649c1fb03512ad93f2}
+
+
+Calculates the autocorrelation window function for a time sampling. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em times} & Times at which data were taken \\
+\hline
+\mbox{\tt in}  & {\em offsets} & The time grid over which the autocorrelation function should be calculated. \\
+\hline
+\mbox{\tt out}  & {\em wf} & The value of the window function at each offset.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyPrecond}{Precondition}
+times contains at least two unique values 
+
+times is sorted in ascending order 
+
+offsets is uniformly sampled from 0 to some maximum offset. This requirement will be relaxed in future versions. 
+\end{DoxyPrecond}
+\begin{DoxyPostcond}{Postcondition}
+wf is of the same length as offsets 
+
+wf\mbox{[}i\mbox{]} is the Scargle autocorrelation function evaluated at offsets\mbox{[}i\mbox{]}, for all i 
+\end{DoxyPostcond}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em invalid\_\-argument} & Thrown if the preconditions on times, or offsets are violated.\\
+\hline
+\end{DoxyExceptions}
+\begin{DoxyParagraph}{Performance:}
+O(times.size() × offsets.size()) time
+\end{DoxyParagraph}
+\begin{Desc}
+\item[\hyperlink{todo__todo000003}{Todo}]Verify that input validation is worth the cost \end{Desc}
+\hypertarget{group__acf_ga4eb6462c49b267c2f9e43d873efc91a5}{
+\index{Autocorrelation function generation@{Autocorrelation function generation}!acWindow@{acWindow}}
+\index{acWindow@{acWindow}!Autocorrelation function generation@{Autocorrelation function generation}}
+\paragraph[{acWindow}]{\setlength{\rightskip}{0pt plus 5cm}void kpftimes::acWindow (
+\begin{DoxyParamCaption}
+\item[{const {\bf DoubleVec} \&}]{times, }
+\item[{const {\bf DoubleVec} \&}]{offsets, }
+\item[{{\bf DoubleVec} \&}]{wf, }
+\item[{double}]{maxFreq}
+\end{DoxyParamCaption}
+)}}
+\label{group__acf_ga4eb6462c49b267c2f9e43d873efc91a5}
+
+
+Calculates the autocorrelation window function for a time sampling. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em times} & Times at which data were taken \\
+\hline
+\mbox{\tt in}  & {\em offsets} & The time grid over which the autocorrelation function should be calculated. \\
+\hline
+\mbox{\tt in}  & {\em maxFreq} & The maximum frequency to consider when calculating the autocorrelation function. \\
+\hline
+\mbox{\tt out}  & {\em wf} & The value of the window function at each offset.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyWarning}{Warning}
+This version of acWindow is highly volatile and may be removed from the library in future versions. I recommend its use only for testing of the autocorrelation algorithm. Wherever possible, use \hyperlink{group__acf_ga3abd7e8a3ae34d649c1fb03512ad93f2}{acWindow()}, which has a stable (or at least forward-\/compatible) spec.
+\end{DoxyWarning}
+\begin{DoxyPrecond}{Precondition}
+times contains at least two unique values 
+
+times is sorted in ascending order 
+
+offsets contains at least two elements 
+
+offsets contains only nonnegative values 
+
+offsets is uniformly sampled from 0 to some maximum offset. This requirement will be relaxed in future versions. 
+
+maxFreq is positive 
+\end{DoxyPrecond}
+\begin{DoxyPostcond}{Postcondition}
+wf is of the same length as offsets 
+
+wf\mbox{[}i\mbox{]} is the Scargle autocorrelation function evaluated at offsets\mbox{[}i\mbox{]}, for all i 
+\end{DoxyPostcond}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em std::invalid\_\-argument} & Thrown if the preconditions on times, offsets, or maxFreq are violated.\\
+\hline
+\end{DoxyExceptions}
+\begin{DoxyParagraph}{Performance:}
+O(times.size() × offsets.size()) time
+\end{DoxyParagraph}
+\begin{Desc}
+\item[\hyperlink{todo__todo000004}{Todo}]Verify that input validation is worth the cost \end{Desc}
+\hypertarget{group__acf_gabbd381218252378ba3c999f49b10f522}{
+\index{Autocorrelation function generation@{Autocorrelation function generation}!autoCorr@{autoCorr}}
+\index{autoCorr@{autoCorr}!Autocorrelation function generation@{Autocorrelation function generation}}
+\paragraph[{autoCorr}]{\setlength{\rightskip}{0pt plus 5cm}void kpftimes::autoCorr (
+\begin{DoxyParamCaption}
+\item[{const {\bf DoubleVec} \&}]{times, }
+\item[{const {\bf DoubleVec} \&}]{fluxes, }
+\item[{const {\bf DoubleVec} \&}]{offsets, }
+\item[{{\bf DoubleVec} \&}]{acf}
+\end{DoxyParamCaption}
+)}}
+\label{group__acf_gabbd381218252378ba3c999f49b10f522}
+
+
+Calculates the autocorrelation function for a time series. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em times} & Times at which data were taken \\
+\hline
+\mbox{\tt in}  & {\em fluxes} & Flux measurements of a source \\
+\hline
+\mbox{\tt in}  & {\em offsets} & The time grid over which the autocorrelation function should be calculated. \\
+\hline
+\mbox{\tt out}  & {\em acf} & The value of the autocorrelation function at each offset.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyPrecond}{Precondition}
+times contains at least two unique values 
+
+times is sorted in ascending order 
+
+fluxes is of the same length as times 
+
+fluxes\mbox{[}i\mbox{]} is the flux of the source at times\mbox{[}i\mbox{]}, for all i 
+
+offsets is uniformly sampled from 0 to some maximum offset. This requirement will be relaxed in future versions. 
+\end{DoxyPrecond}
+\begin{DoxyPostcond}{Postcondition}
+acf is of the same length as offsets 
+
+acf\mbox{[}i\mbox{]} is the Scargle autocorrelation function evaluated at offsets\mbox{[}i\mbox{]}, for all i 
+\end{DoxyPostcond}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em invalid\_\-argument} & Thrown if the preconditions on times, offsets, or length(fluxes) are violated.\\
+\hline
+\end{DoxyExceptions}
+\begin{DoxyParagraph}{Performance:}
+O(times.size() × offsets.size()) time
+\end{DoxyParagraph}
+\begin{Desc}
+\item[\hyperlink{todo__todo000001}{Todo}]Allow autoCorr to run with arbitrary offset grids 
+
+Verify that input validation is worth the cost \end{Desc}
+\begin{Desc}
+\item[\hyperlink{bug__bug000001}{Bug}]Many ACFs show a strong fringing effect. The fringes have a wavelength corresponding to the pseudo-\/Nyquist frequency, or to the highest peak frequency that is below the pseudo-\/Nyquist frequency if the power spectrum of the data is strongly peaked. \end{Desc}
+\hypertarget{group__acf_gae1a0defc2c251ed147a33877081ba7d7}{
+\index{Autocorrelation function generation@{Autocorrelation function generation}!autoCorr@{autoCorr}}
+\index{autoCorr@{autoCorr}!Autocorrelation function generation@{Autocorrelation function generation}}
+\paragraph[{autoCorr}]{\setlength{\rightskip}{0pt plus 5cm}void kpftimes::autoCorr (
+\begin{DoxyParamCaption}
+\item[{const {\bf DoubleVec} \&}]{times, }
+\item[{const {\bf DoubleVec} \&}]{fluxes, }
+\item[{const {\bf DoubleVec} \&}]{offsets, }
+\item[{{\bf DoubleVec} \&}]{acf, }
+\item[{double}]{maxFreq}
+\end{DoxyParamCaption}
+)}}
+\label{group__acf_gae1a0defc2c251ed147a33877081ba7d7}
+
+
+Calculates the autocorrelation function for a time series. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em times} & Times at which data were taken \\
+\hline
+\mbox{\tt in}  & {\em fluxes} & Flux measurements of a source \\
+\hline
+\mbox{\tt in}  & {\em offsets} & The time grid over which the autocorrelation function should be calculated. \\
+\hline
+\mbox{\tt in}  & {\em maxFreq} & The maximum frequency to consider when calculating the autocorrelation function. \\
+\hline
+\mbox{\tt out}  & {\em acf} & The value of the autocorrelation function at each offset.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyNote}{Note}
+Increasing maxFreq will increase the time resolution of acf at the cost of making the entire function noisier.
+\end{DoxyNote}
+\begin{DoxyWarning}{Warning}
+This version of autoCorr is highly volatile and may be removed from the library in future versions. I recommend its use only for testing of the autocorrelation algorithm. Wherever possible, use \hyperlink{group__acf_gabbd381218252378ba3c999f49b10f522}{autoCorr()}, which has a stable (or at least forward-\/compatible) spec.
+\end{DoxyWarning}
+\begin{DoxyPrecond}{Precondition}
+times contains at least two unique values 
+
+times is sorted in ascending order 
+
+fluxes is of the same length as times 
+
+fluxes\mbox{[}i\mbox{]} is the flux of the source at times\mbox{[}i\mbox{]}, for all i 
+
+offsets contains at least two elements 
+
+offsets contains only nonnegative values 
+
+offsets is uniformly sampled from 0 to some maximum offset. This requirement will be relaxed in future versions. 
+
+maxFreq is positive 
+\end{DoxyPrecond}
+\begin{DoxyPostcond}{Postcondition}
+acf is of the same length as offsets 
+
+acf\mbox{[}i\mbox{]} is the Scargle autocorrelation function evaluated at offsets\mbox{[}i\mbox{]}, for all i 
+\end{DoxyPostcond}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em std::invalid\_\-argument} & Thrown if the preconditions on times, offsets, length(fluxes), or maxFreq are violated.\\
+\hline
+\end{DoxyExceptions}
+\begin{DoxyParagraph}{Performance:}
+O(times.size() × offsets.size()) time
+\end{DoxyParagraph}
+\begin{Desc}
+\item[\hyperlink{todo__todo000002}{Todo}]Verify that input validation is worth the cost \end{Desc}

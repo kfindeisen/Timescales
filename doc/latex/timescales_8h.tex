@@ -1,0 +1,59 @@
+\hypertarget{timescales_8h}{
+\subsection{timescales.h File Reference}
+\label{timescales_8h}\index{timescales.h@{timescales.h}}
+}
+
+
+Primary header for Krzysztof's timescales library.  
+
+
+\subsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{timescales_8h_a0c7cd7d877b5ba249ee140c61f73ba69}{
+typedef std::vector$<$ double $>$ \hyperlink{timescales_8h_a0c7cd7d877b5ba249ee140c61f73ba69}{DoubleVec}}
+\label{timescales_8h_a0c7cd7d877b5ba249ee140c61f73ba69}
+
+\begin{DoxyCompactList}\small\item\em A convenient shorthand for vectors of doubles. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{group__period_ga2c64d467f67fa7f90f96617275e057a7}{kpftimes::lombScargle} (const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&times, const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&fluxes, const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&freq, \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&power)
+\begin{DoxyCompactList}\small\item\em Calculates the Lomb-\/Scargle periodogram for a time series. \end{DoxyCompactList}\item 
+double \hyperlink{group__period_ga86b0f84540eab7eb0793b5ba94899d1e}{kpftimes::lsThreshold} (const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&times, const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&freq, double fap, long nSims)
+\begin{DoxyCompactList}\small\item\em Calculates the significance threshold for a Lomb-\/Scargle periodogram. \end{DoxyCompactList}\item 
+void \hyperlink{group__period_gab3a488d98ed28a6723689f09b5d984fb}{kpftimes::lsNormalEdf} (const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&times, const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&freqs, \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&powers, \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&probs, long nSims)
+\begin{DoxyCompactList}\small\item\em Calculates the empirical distribution function of false peaks for a Lomb-\/Scargle periodogram. \end{DoxyCompactList}\item 
+void \hyperlink{group__acf_gabbd381218252378ba3c999f49b10f522}{kpftimes::autoCorr} (const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&times, const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&fluxes, const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&offsets, \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&acf)
+\begin{DoxyCompactList}\small\item\em Calculates the autocorrelation function for a time series. \end{DoxyCompactList}\item 
+void \hyperlink{group__acf_gae1a0defc2c251ed147a33877081ba7d7}{kpftimes::autoCorr} (const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&times, const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&fluxes, const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&offsets, \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&acf, double maxFreq)
+\begin{DoxyCompactList}\small\item\em Calculates the autocorrelation function for a time series. \end{DoxyCompactList}\item 
+void \hyperlink{group__acf_ga3abd7e8a3ae34d649c1fb03512ad93f2}{kpftimes::acWindow} (const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&times, const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&offsets, \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&wf)
+\begin{DoxyCompactList}\small\item\em Calculates the autocorrelation window function for a time sampling. \end{DoxyCompactList}\item 
+void \hyperlink{group__acf_ga4eb6462c49b267c2f9e43d873efc91a5}{kpftimes::acWindow} (const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&times, const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&offsets, \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&wf, double maxFreq)
+\begin{DoxyCompactList}\small\item\em Calculates the autocorrelation window function for a time sampling. \end{DoxyCompactList}\item 
+void \hyperlink{group__dmdt_gae563ceae74999c875508e55c7675edb6}{kpftimes::dmdt} (const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&times, const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&fluxes, \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&deltaT, \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&deltaM)
+\begin{DoxyCompactList}\small\item\em Calculates all Delta-\/m Delta-\/T pairs. \end{DoxyCompactList}\item 
+double \hyperlink{group__grid_gad3ff4682c1b247c928c495f29c3dc7a2}{kpftimes::deltaT} (const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&times)
+\begin{DoxyCompactList}\small\item\em Returns the time interval covered by the data. \end{DoxyCompactList}\item 
+double \hyperlink{group__util_ga4b6ecddd43b6c6caf1d0db59b4a0b613}{kpftimes::pseudoNyquistFreq} (const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&times)
+\begin{DoxyCompactList}\small\item\em Returns the pseudo-\/Nyquist frequency for a grid of observations. \end{DoxyCompactList}\item 
+double \hyperlink{group__grid_gae62bc6f792fbbc2447cb85dbac341c5f}{kpftimes::maxFreq} (const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&times)
+\begin{DoxyCompactList}\small\item\em Returns the highest frequency that can be probed by the data. \end{DoxyCompactList}\item 
+void \hyperlink{group__grid_ga591c0083b481ff4bbae69be4f33318ef}{kpftimes::freqGen} (const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&times, \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&freq)
+\begin{DoxyCompactList}\small\item\em Creates a frequency grid that can be fed to time series analysis functions. \end{DoxyCompactList}\item 
+void \hyperlink{group__grid_ga1c2d7d03f7a81eef3899d5a073d5677a}{kpftimes::freqGen} (const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&times, \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&freq, double fMin, double fMax)
+\begin{DoxyCompactList}\small\item\em This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. \end{DoxyCompactList}\item 
+void \hyperlink{group__grid_ga5fc61b434afae334b5ec95e1ab0f7093}{kpftimes::freqGen} (const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&times, \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&freq, double fMin, double fMax, double fStep)
+\begin{DoxyCompactList}\small\item\em This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsubsection{Detailed Description}
+Primary header for Krzysztof's timescales library. \begin{DoxyAuthor}{Author}
+Krzysztof Findeisen 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+Created January 25, 2010 
+
+Last modified July 24, 2011 
+\end{DoxyDate}

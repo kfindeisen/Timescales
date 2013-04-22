@@ -1,0 +1,44 @@
+\hypertarget{utils_8h}{
+\subsection{utils.h File Reference}
+\label{utils_8h}\index{utils.h@{utils.h}}
+}
+
+
+Support code for the library.  
+
+
+\subsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classkpftimes_1_1_fast_table}{kpftimes::FastTable}
+\begin{DoxyCompactList}\small\item\em Two-\/dimensional dynamically allocated table. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{utils_8h_a0c7cd7d877b5ba249ee140c61f73ba69}{
+typedef std::vector$<$ double $>$ \hyperlink{utils_8h_a0c7cd7d877b5ba249ee140c61f73ba69}{DoubleVec}}
+\label{utils_8h_a0c7cd7d877b5ba249ee140c61f73ba69}
+
+\begin{DoxyCompactList}\small\item\em A convenient shorthand for vectors of doubles. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \hyperlink{group__util_ga09e4d36be1ae592adb744e274fd619d7}{kpftimes::isSortedAsc} (const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&list)
+\begin{DoxyCompactList}\small\item\em Tests whether the argument is sorted. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class ForwardIterator $>$ }\\std::iterator\_\-traits$<$ ForwardIterator $>$::value\_\-type \hyperlink{group__util_ga4a69dd17d28119657d408b8d26931681}{kpftimes::mean} (ForwardIterator first, ForwardIterator last)
+\begin{DoxyCompactList}\small\item\em Finds the mean of the values in a generic container object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class ForwardIterator $>$ }\\std::iterator\_\-traits$<$ ForwardIterator $>$::value\_\-type \hyperlink{group__util_ga2c5ce34d5fee9b6101fc1f617377ffc8}{kpftimes::variance} (ForwardIterator first, ForwardIterator last)
+\begin{DoxyCompactList}\small\item\em Finds the variance of the values in a generic container object. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsubsection{Detailed Description}
+Support code for the library. None of these routines are intended as part of the public API.
+
+\begin{DoxyAuthor}{Author}
+Krzysztof Findeisen 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+Created April 13, 2011 
+
+Last modified July 24, 2011 
+\end{DoxyDate}

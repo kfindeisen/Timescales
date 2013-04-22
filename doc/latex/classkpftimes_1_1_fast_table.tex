@@ -1,0 +1,194 @@
+\hypertarget{classkpftimes_1_1_fast_table}{
+\subsection{kpftimes::FastTable Class Reference}
+\label{classkpftimes_1_1_fast_table}\index{kpftimes::FastTable@{kpftimes::FastTable}}
+}
+
+
+Two-\/dimensional dynamically allocated table.  
+
+
+\subsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classkpftimes_1_1_fast_table_ad3521d0b64b71f0ad53515a968592461}{FastTable} (size\_\-t dimX, size\_\-t dimY)
+\begin{DoxyCompactList}\small\item\em Constructs but does not initialize a table of fixed size. \end{DoxyCompactList}\item 
+\hyperlink{classkpftimes_1_1_fast_table_a7779e369693fcfb7b45fc80a95a1c0c6}{FastTable} (const \hyperlink{classkpftimes_1_1_fast_table}{FastTable} \&otherTable)
+\begin{DoxyCompactList}\small\item\em Constructs an independent copy of the given object, containing identical data. \end{DoxyCompactList}\item 
+\hyperlink{classkpftimes_1_1_fast_table}{FastTable} \& \hyperlink{classkpftimes_1_1_fast_table_a3495b0bccb0b5d165892a2fab5645dd7}{operator=} (const \hyperlink{classkpftimes_1_1_fast_table}{FastTable} \&otherTable)
+\begin{DoxyCompactList}\small\item\em Alters the existing object to be identical to otherTable. \end{DoxyCompactList}\item 
+double \& \hyperlink{classkpftimes_1_1_fast_table_a2afaf3ba8f1a699a85c943f278db5c67}{at} (size\_\-t x, size\_\-t y)
+\begin{DoxyCompactList}\small\item\em Access function to allow reads and writes of a table element. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsubsection{Detailed Description}
+Two-\/dimensional dynamically allocated table. 
+
+The table is designed to allow fast (i.e. localized) scans along the Y axis. It has barely any other functionality. 
+
+\subsubsection{Constructor \& Destructor Documentation}
+\hypertarget{classkpftimes_1_1_fast_table_ad3521d0b64b71f0ad53515a968592461}{
+\index{kpftimes::FastTable@{kpftimes::FastTable}!FastTable@{FastTable}}
+\index{FastTable@{FastTable}!kpftimes::FastTable@{kpftimes::FastTable}}
+\paragraph[{FastTable}]{\setlength{\rightskip}{0pt plus 5cm}kpftimes::FastTable::FastTable (
+\begin{DoxyParamCaption}
+\item[{size\_\-t}]{initX, }
+\item[{size\_\-t}]{initY}
+\end{DoxyParamCaption}
+)}}
+\label{classkpftimes_1_1_fast_table_ad3521d0b64b71f0ad53515a968592461}
+
+
+Constructs but does not initialize a table of fixed size. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em initX} & The first dimension of the table. \\
+\hline
+\mbox{\tt in}  & {\em initY} & The first dimension of the table.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyPrecond}{Precondition}
+initX $>$ 0 and initY $>$ 0 
+\end{DoxyPrecond}
+\begin{DoxyPostcond}{Postcondition}
+The object represents an initX by initY table of values. The table elements are not constrained.
+\end{DoxyPostcond}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em std::invalid\_\-argument} & Thrown if the table dimensions aren't valid.\\
+\hline
+\end{DoxyExceptions}
+\begin{DoxyNote}{Note}
+Once the \hyperlink{classkpftimes_1_1_fast_table}{FastTable} object has been constructed, its dimensions cannot be changed.
+\end{DoxyNote}
+\begin{Desc}
+\item[\hyperlink{test__test000005}{Test}]\hyperlink{classkpftimes_1_1_fast_table}{FastTable}(-\/1, 1). Expected behavior: throw invalid\_\-argument 
+
+FastTable(0, 1). Expected behavior: throw invalid\_\-argument 
+
+\hyperlink{classkpftimes_1_1_fast_table}{FastTable}(1, -\/1). Expected behavior: throw invalid\_\-argument 
+
+FastTable(1, 0). Expected behavior: throw invalid\_\-argument 
+
+FastTable(1, 1). Expected behavior: success. Can iterate over elements with external loop. 
+
+FastTable(4, 5). Expected behavior: success. Can iterate over elements with external loop. 
+
+FastTable(5, 4). Expected behavior: success. Can iterate over elements with external loop. \end{Desc}
+\hypertarget{classkpftimes_1_1_fast_table_a7779e369693fcfb7b45fc80a95a1c0c6}{
+\index{kpftimes::FastTable@{kpftimes::FastTable}!FastTable@{FastTable}}
+\index{FastTable@{FastTable}!kpftimes::FastTable@{kpftimes::FastTable}}
+\paragraph[{FastTable}]{\setlength{\rightskip}{0pt plus 5cm}kpftimes::FastTable::FastTable (
+\begin{DoxyParamCaption}
+\item[{const {\bf FastTable} \&}]{other}
+\end{DoxyParamCaption}
+)}}
+\label{classkpftimes_1_1_fast_table_a7779e369693fcfb7b45fc80a95a1c0c6}
+
+
+Constructs an independent copy of the given object, containing identical data. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em other} & The object to copy.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyPostcond}{Postcondition}
+The object is indistinguishable from other, but may be modified or deleted independently.
+\end{DoxyPostcond}
+\begin{Desc}
+\item[\hyperlink{test__test000006}{Test}]FastTable(1, 1). Expected behavior: success. Can iterate over elements with external loop and edit independently. 
+
+FastTable(4, 5). Expected behavior: success. Can iterate over elements with external loop and edit independently. 
+
+FastTable(5, 4). Expected behavior: success. Can iterate over elements with external loop and edit independently. \end{Desc}
+
+
+\subsubsection{Member Function Documentation}
+\hypertarget{classkpftimes_1_1_fast_table_a2afaf3ba8f1a699a85c943f278db5c67}{
+\index{kpftimes::FastTable@{kpftimes::FastTable}!at@{at}}
+\index{at@{at}!kpftimes::FastTable@{kpftimes::FastTable}}
+\paragraph[{at}]{\setlength{\rightskip}{0pt plus 5cm}double \& kpftimes::FastTable::at (
+\begin{DoxyParamCaption}
+\item[{size\_\-t}]{x, }
+\item[{size\_\-t}]{y}
+\end{DoxyParamCaption}
+)}}
+\label{classkpftimes_1_1_fast_table_a2afaf3ba8f1a699a85c943f278db5c67}
+
+
+Access function to allow reads and writes of a table element. 
+
+Elements with the same x coordinate and adjacent y coordinates are adjacent in memory.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em x} & The first-\/dimension coordinate to be read. \\
+\hline
+\mbox{\tt in}  & {\em y} & The second-\/dimension coordinate to be read.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+An lvalued reference to the element Table\mbox{[}x, y\mbox{]}
+\end{DoxyReturn}
+\begin{DoxyPrecond}{Precondition}
+0 $<$= x $<$ dimX 
+
+0 $<$= y $<$ dimY
+\end{DoxyPrecond}
+\begin{DoxyWarning}{Warning}
+In the interests of speed-\/at-\/all-\/costs, preconditions are {\itshape not\/} checked.
+\end{DoxyWarning}
+\begin{Desc}
+\item[\hyperlink{test__test000008}{Test}]FastTable(4, 5).at(0, 2). Expected behavior: update reflected by separate .\hyperlink{classkpftimes_1_1_fast_table_a2afaf3ba8f1a699a85c943f278db5c67}{at()}. 
+
+FastTable(4, 5).at(3, 2). Expected behavior: update reflected by separate .\hyperlink{classkpftimes_1_1_fast_table_a2afaf3ba8f1a699a85c943f278db5c67}{at()}. 
+
+FastTable(4, 5).at(2, 0). Expected behavior: update reflected by separate .\hyperlink{classkpftimes_1_1_fast_table_a2afaf3ba8f1a699a85c943f278db5c67}{at()}. 
+
+FastTable(4, 5).at(2, 4). Expected behavior: update reflected by separate .\hyperlink{classkpftimes_1_1_fast_table_a2afaf3ba8f1a699a85c943f278db5c67}{at()}. 
+
+FastTable(1000, 1000).at(x,y) = x+y±x$\ast$y iteration in both directions. Expected behavior: y-\/inner loop faster than x-\/inner loop for 10 out of 10 objects. \end{Desc}
+\hypertarget{classkpftimes_1_1_fast_table_a3495b0bccb0b5d165892a2fab5645dd7}{
+\index{kpftimes::FastTable@{kpftimes::FastTable}!operator=@{operator=}}
+\index{operator=@{operator=}!kpftimes::FastTable@{kpftimes::FastTable}}
+\paragraph[{operator=}]{\setlength{\rightskip}{0pt plus 5cm}{\bf kpftimes::FastTable} \& FastTable::operator= (
+\begin{DoxyParamCaption}
+\item[{const {\bf FastTable} \&}]{other}
+\end{DoxyParamCaption}
+)}}
+\label{classkpftimes_1_1_fast_table_a3495b0bccb0b5d165892a2fab5645dd7}
+
+
+Alters the existing object to be identical to otherTable. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em other} & The object to copy.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyPrecond}{Precondition}
+This object has the same dimensions as other. 
+\end{DoxyPrecond}
+\begin{DoxyPostcond}{Postcondition}
+The object is indistinguishable from other, but may be modified or deleted independently.
+\end{DoxyPostcond}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em domain\_\-error} & Thrown if the two tables have mismatched dimensions.\\
+\hline
+\end{DoxyExceptions}
+\begin{Desc}
+\item[\hyperlink{test__test000007}{Test}]FastTable(1, 1) = FastTable(1, 1). Expected behavior: success. Can iterate over elements with external loop and edit independently. 
+
+FastTable(4, 5) = FastTable(4, 5). Expected behavior: success. Can iterate over elements with external loop and edit independently. 
+
+FastTable(4, 5) = FastTable(5, 5). Expected behavior: throw domain\_\-error. 
+
+FastTable(5, 4) = FastTAble(5, 5). Expected behavior: throw domain\_\-error. \end{Desc}
+
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+\hyperlink{utils_8h}{utils.h}\item 
+\hyperlink{utils_8cpp}{utils.cpp}\end{DoxyCompactItemize}

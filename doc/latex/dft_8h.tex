@@ -1,0 +1,38 @@
+\hypertarget{dft_8h}{
+\subsection{dft.h File Reference}
+\label{dft_8h}\index{dft.h@{dft.h}}
+}
+
+
+Computes the irregularly-\/sampled discrete Fourier transform.  
+
+
+\subsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{
+typedef std::vector$<$ double $>$ \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec}}
+\label{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}
+
+\begin{DoxyCompactList}\small\item\em A convenient shorthand for vectors of doubles. \end{DoxyCompactList}\item 
+\hypertarget{dft_8h_a2dcb081ab99acd454f8b3b51e039cdfa}{
+typedef std::vector$<$ std::complex$<$ double $>$ $>$ \hyperlink{dft_8h_a2dcb081ab99acd454f8b3b51e039cdfa}{ComplexVec}}
+\label{dft_8h_a2dcb081ab99acd454f8b3b51e039cdfa}
+
+\begin{DoxyCompactList}\small\item\em A convenient shorthand for vectors of complex numbers. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{group__util_ga716380f15a77c791f6d22b72687ca9d2}{kpftimes::dft} (const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&times, const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&fluxes, const \hyperlink{dft_8h_ae5d5553d1db3abe03c161a5ffd0bf9ad}{DoubleVec} \&freqs, \hyperlink{dft_8h_a2dcb081ab99acd454f8b3b51e039cdfa}{ComplexVec} \&dft)
+\begin{DoxyCompactList}\small\item\em Calculates the discrete Fourier transform for a list of times and fluxes. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsubsection{Detailed Description}
+Computes the irregularly-\/sampled discrete Fourier transform. \begin{DoxyAuthor}{Author}
+Krzysztof Findeisen 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+Created February 13, 2011 
+
+Last modified April 14, 2011 
+\end{DoxyDate}

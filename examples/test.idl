@@ -1,0 +1,38 @@
+; plottest.idl
+; by Krzysztof Findeisen
+; Created February 15, 2011
+; Last modified April 15, 2011
+; plotting script for Timescales example results
+
+readcol, 'test.obs.txt', times, fluxes, /silent
+readcol, 'test.pgram.txt', freqs, powers, /silent
+readcol, 'test.acf.txt', offsets, acfs, /silent
+readcol, 'test.win.txt', woffsets, wfs, /silent
+readcol, 'test.unwinacf.txt', unoffsets, unacfs, /silent
+
+@printableplots.idl
+
+set_plot, 'ps'
+device, file='test.ps', xoffset=0.75, yoffset=0.75, xsize=7.0, ysize=9.5, /inches
+
+!p.multi = [0, 1, 3]
+
+plot, times, fluxes, psym=1, xtitle='Time', ytitle='Flux'
+
+plot, freqs, powers, xtitle='Frequency', ytitle='Power'
+
+plot, offsets, acfs, xtitle='Offset', ytitle='Autocorrelation', yrange=[-1.0, 1.0]
+delT = max(times)-min(times)
+freq = 5.432
+bestacf = (4*!PI*freq*(delT-offsets)*cos(2*!PI*freq*offsets) $
+	- sin(2*!PI*freq*(2*delT-offsets) + sin(2*!PI*freq*offsets) ) )/(4.0*!PI*freq*delT)
+bestacf = bestacf / (delT - offsets)
+oplot, offsets, bestacf, linestyle=1
+
+!p.multi = [0, 1, 2]
+
+plot, unoffsets, unacfs, xtitle='Offset', ytitle='ACF * WF', yrange=[-1.0, 1.0]
+plot, woffsets , wfs   , xtitle='Offset', ytitle='ACWF', yrange=[-1.0, 1.0]
+
+device, /close_file
+set_plot, 'x'
