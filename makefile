@@ -1,51 +1,72 @@
 # Compilation make for timescales.lib / libtimescales.a
 # by Krzysztof Findeisen
 # Created March 18, 2010
-# Last modified July 6, 2011
+# Last modified June 14, 2013
+
+include makefile.inc
 
 #-----------------------------------------------------------
 # Configurable options
-CC       = g++
-PROJFILE = lib$(PROJ).a
-INCDIRS  = c:/krzys/softdev/importlib/include
-LIBDIRS  = . /usr/lib c:/krzys/softdev/CPP/lib c:/krzys/softdev/importlib/lib
 
 # Do we want to use the fast but high-memory version of lsThreshold, or the slow but low-memory one?
-ALGTYPE  = 
-#ALGTYPE  = -DSCARGLE_SLOW
+ALGTYPE  := 
+#ALGTYPE  := -DSCARGLE_SLOW
 
-#-----------------------------------------------------------
-# Fixed options
-PROJ     = timescales
-OBJS     = autocorr.o dft.o freqgen.o pairwise.o scargle.o specialfreqs.o utils.o
-#TESTOBJS = driver.o unit_autoCorr.o unit_lsNormalEdf.o
-TESTOBJS = driver.o unit_stats.o unit_FastTable.o
-# Libraries are for test code only. $(PROJ) itself cannot be linked with anything
-LIBS	 = gsl gslcblas
+#---------------------------------------
+# Select all files
+PROJ        := timescales
+PROJ        := lib$(PROJ).a
+SOURCES     := autocorr.cpp dft.cpp freqgen.cpp pairwise.cpp scargle.cpp specialfreqs.cpp utils.cpp
+OBJS        :=     $(SOURCES:.cpp=.o)
+# except must be last because other libraries depend on it
+#DIRS     := cmd samples stats waves except 
+#TESTLIBS := gsl gslcblas boost_unit_test_framework-mt 
 
-# Apparently the Cygwin STL implementation doesn't pass the effective C++ guidelines!
-# And Boost.test uses old-style casts
-#LANGTYPE = -std=c++98 -Wall -Wextra -Weffc++ -Wdeprecated -Wold-style-cast -Wsign-promo
-LANGTYPE = -std=c++98 -Wall -Wextra -Wdeprecated -Wsign-promo
-OPTFLAGS = -O3
+#---------------------------------------
+# Primary build option
+$(PROJ): $(OBJS)
+	@echo "Packaging $@..."
+	@$(AR) $(ARFLAGS) $@ $^
 
-CFLAGS   = $(LANGTYPE) $(OPTFLAGS) $(ALGTYPE) -Werror
+#---------------------------------------
+# Subdirectories
+# Can't declare the directories phony directly, or the library will be built every time
+.PHONY: cd
 
-#-----------------------------------------------------------
-# Compile instructions
-$(PROJFILE): $(OBJS)
-	ar rusv $@ $^
+examples: cd | $(PROJ)
+	@make -C examples --no-print-directory $(MFLAGS)
 
-%.o: %.cpp
-	$(CC) -c $(CFLAGS) -o $@ $^ $(addprefix -I ,$(INCDIRS))
-	
-# -mno-cygwin linker flag?
-example: $(PROJFILE) examples/example.cpp
-	$(CC) $(CFLAGS) -o examples/example examples/example.cpp -l$(PROJ) \
-		$(addprefix -l,$(LIBS)) $(addprefix -L ,$(LIBDIRS))
+tests: cd | $(PROJ)
+	@make -C tests --no-print-directory $(MFLAGS)
 
-test: $(PROJFILE) $(addprefix tests/,$(TESTOBJS))
-	$(CC) $(CFLAGS) -o tests/test $(addprefix tests/,$(TESTOBJS)) $(addprefix -L ,$(LIBDIRS)) -l$(PROJ) $(addprefix -l,$(LIBS)) -lboost_unit_test_framework
+include makefile.common
 
-clean:
-	rm -vf *.o *~ examples/*.o examples/*~ tests/*.o tests/*~ core
+#---------------------------------------
+# Doxygen
+.PHONY: doc
+doc: doc/
+doc/: $(SOURCES) $(DIRS) tests doxygen.cfg
+	doxygen doxygen.cfg
+	cd doc/latex && make
+
+
+#---------------------------------------
+# Demonstration
+.PHONY: example
+example: examples | $(PROJ)
+
+#---------------------------------------
+# Test cases
+.PHONY: unittest
+unittest: tests | $(PROJ)
+
+#.PHONY: autotest
+#autotest: $(PROJ) unittest
+#	@echo "Beginning regression test suite..."
+#	@echo "Tests started on `date`"
+#	@cd tests && ./autotest.sh ; echo "Tests completed on `date`"
+
+#---------------------------------------
+# Build program, test suite, and documentation
+.PHONY: all
+all: $(PROJ) example unittest doc

@@ -1,0 +1,41 @@
+# Common recipes for timescale compilation
+# by Krzysztof Findeisen
+# Created June 14, 2013
+# Last modified June 14, 2013
+
+#---------------------------------------
+# Actual compilation options
+
+# override default recipe to make sure the flags are used when compiling
+%.o: 
+# Avoid using $^ because it will include any dependencies
+	@echo "Compiling $(@:.o=.cpp)..."
+	@$(CXX) -c $(CXXFLAGS) -o $@ $(@:.o=.cpp) $(addprefix -I ,$(INCDIRS))
+
+#---------------------------------------
+# Set up dependencies
+%.d: %.cpp
+	@echo "Dependencies for $(filter %.cpp,$^) -> $@"
+	@$(CXX) $(CXXFLAGS) -MM $(filter %.cpp,$^) -MF $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	$(RM) $@.$$$$
+
+include $(SOURCES:.cpp=.d)
+
+#---------------------------------------
+# Cleanup code
+# Recursion is safe when $(DIRS) is empty
+.PHONY: cleanall clean cleandepend
+clean:
+	-@$(RM) -v *.o *.stackdump *~
+	-@for d in $(DIRS) examples tests; do if [[ -d $$d ]]; then make -C $$d --no-print-directory clean; fi; done
+	-@if [[ -d doc ]]; then $(RM) -r doc/*; fi
+
+cleandepend: 
+	-@$(RM) -v *.d
+	-@for d in $(DIRS) examples tests; do if [[ -d $$d ]]; then make -C $$d --no-print-directory cleandepend; fi; done
+
+cleanall: clean cleandepend
+
+.PHONY: rebuild
+rebuild: clean $(PROJ)
