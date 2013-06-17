@@ -94,7 +94,13 @@ template <class ForwardIterator> 				// Iterator to use
 	if (count <= 0) {
 		throw std::invalid_argument("Not enough data to compute mean");
 	}
-	return static_cast<Value>(sum / count);
+
+	// Force floating-point arithmetic to avoid inconsistencies in 
+	//	integer division rounding conventions
+	// Delayed conversion because ++ operator is inaccurate for large doubles
+	double dcount = static_cast<double>(count);
+
+	return static_cast<Value>(sum / dcount);
 }
 
 /** Finds the variance of the values in a generic container object. The 
