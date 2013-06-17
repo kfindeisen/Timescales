@@ -142,7 +142,7 @@ BOOST_FIXTURE_TEST_SUITE(test_FastTable, FtData)
 BOOST_AUTO_TEST_CASE(access) {
 	/** @test FastTable(4, 5).at(3, 2). Expected behavior: update reflected by separate .at().
 	 */
-	BOOST_CHECK_NO_THROW(FastTable45.at(3, 2) = 42.2));
+	BOOST_CHECK_NO_THROW(FastTable45.at(3, 2) = 42.2);
 	// Exact equality check, because no math operations should have occurred
 	BOOST_CHECK_NO_THROW(BOOST_CHECK_EQUAL(FastTable45.at(3, 2), 42.2));
 	
@@ -222,6 +222,50 @@ BOOST_AUTO_TEST_CASE(assignment) {
 	BOOST_CHECK_THROW(newTable4 = FastTable45, std::domain_error);
 }
 
+/** Measures the time needed to traverse a table in y, then x
+ *
+ * @param[in] table The FastTable to update
+ * @param[in] dimX, dimY The dimensions of @p table
+ *
+ * @return The number of clock ticks needed to iterate once over @p table.
+ *
+ * @exceptsafe Does not throw exceptions.
+ */
+long clockFast(FastTable& table, size_t dimX, size_t dimY) {
+	clock_t start, end;
+	start = clock();
+	for(size_t x = 0; x < dimX; x++) {
+		for(size_t y = 0; y < dimY; y++) {
+			table.at(x, y) = x + y + x*y;
+		}
+	}
+	end = clock();
+	
+	return end - start;
+}
+
+/** Measures the time needed to traverse a table in x, then y
+ *
+ * @param[in] table The FastTable to update
+ * @param[in] dimX, dimY The dimensions of @p table
+ *
+ * @return The number of clock ticks needed to iterate once over @p table.
+ *
+ * @exceptsafe Does not throw exceptions.
+ */
+long clockSlow(FastTable& table, size_t dimX, size_t dimY) {
+	clock_t start, end;
+	start = clock();
+	for(size_t y = 0; y < dimY; y++) {
+		for(size_t x = 0; x < dimX; x++) {
+			table.at(x, y) = x + y + x*y;
+		}
+	}
+	end = clock();
+	
+	return end - start;
+}
+
 /** Tests whether a FastTable allocated on the stack has faster element 
  *	access in the y direction than the x direction
  *
@@ -229,33 +273,20 @@ BOOST_AUTO_TEST_CASE(assignment) {
  */
 BOOST_AUTO_TEST_CASE(stack_speed) {
 	/** @test FastTable(1000, 1000).at(x,y) = x+y±x*y iteration in both directions. 
-	 *	Expected behavior: y-inner loop faster than x-inner loop for 10 out of 10 
+	 *	Expected behavior: y-inner loop faster than x-inner loop on average over 10 
 	 *	objects.
 	 */
+	long fastTotal = 0;
+	long slowTotal = 0;
 	for (size_t nTest = 0; nTest < TEST_COUNT; nTest++) {
 		FastTable speedTable(TEST_BIGSIZE, TEST_BIGSIZE);
 		
-		clock_t startFast, endFast;
-		startFast = clock();
-		for(size_t x = 0; x < TEST_BIGSIZE; x++) {
-			for(size_t y = 0; y < TEST_BIGSIZE; y++) {
-				speedTable.at(x, y) = x + y + x*y;
-			}
-		}
-		endFast = clock();
+		fastTotal += clockFast(speedTable, TEST_BIGSIZE, TEST_BIGSIZE);
 
-		clock_t startSlow, endSlow;
-		startSlow = clock();
-		for(size_t y = 0; y < TEST_BIGSIZE; y++) {
-			for(size_t x = 0; x < TEST_BIGSIZE; x++) {
-				speedTable.at(x, y) = x + y + x*y;
-			}
-		}
-		endSlow = clock();
-
-		// Are we faster?
-		BOOST_CHECK_LT(endFast - startFast, endSlow - startSlow);
+		slowTotal += clockSlow(speedTable, TEST_BIGSIZE, TEST_BIGSIZE);
 	}
+	// Are we faster on average?
+	BOOST_CHECK_LT(fastTotal, slowTotal);
 }
 
 /** Tests whether a FastTable allocated on the heap has faster element 
@@ -265,39 +296,23 @@ BOOST_AUTO_TEST_CASE(stack_speed) {
  */
 BOOST_AUTO_TEST_CASE(heap_speed) {
 	/** @test FastTable(1000, 1000).at(x,y) = x+y±x*y iteration in both directions. 
-	 *	Expected behavior: y-inner loop faster than x-inner loop for 10 out of 10 
+	 *	Expected behavior: y-inner loop faster than x-inner loop on average over 10 
 	 *	objects.
 	 */
+	long fastTotal = 0;
+	long slowTotal = 0;
 	for (size_t nTest = 0; nTest < TEST_COUNT; nTest++) {
 		FastTable *speedTable = new FastTable(TEST_BIGSIZE, TEST_BIGSIZE);
-		
-		clock_t startFast, endFast;
-		startFast = clock();
-		for(size_t x = 0; x < TEST_BIGSIZE; x++) {
-			for(size_t y = 0; y < TEST_BIGSIZE; y++) {
-				speedTable->at(x, y) = x + y + x*y;
-			}
-		}
-		endFast = clock();
-
+		fastTotal += clockFast(*speedTable, TEST_BIGSIZE, TEST_BIGSIZE);
 		delete speedTable;		
 
 		speedTable = new FastTable(TEST_BIGSIZE, TEST_BIGSIZE);
-		
-		clock_t startSlow, endSlow;
-		startSlow = clock();
-		for(size_t y = 0; y < TEST_BIGSIZE; y++) {
-			for(size_t x = 0; x < TEST_BIGSIZE; x++) {
-				speedTable->at(x, y) = x + y + x*y;
-			}
-		}
-		endSlow = clock();
+		slowTotal += clockSlow(*speedTable, TEST_BIGSIZE, TEST_BIGSIZE);
 
 		delete speedTable;
-		
-		// Are we faster?
-		BOOST_CHECK_LT(endFast - startFast, endSlow - startSlow);
 	}
+	// Are we faster on average?
+	BOOST_CHECK_LT(fastTotal, slowTotal);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
