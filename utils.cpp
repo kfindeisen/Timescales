@@ -34,7 +34,7 @@ using namespace kpftimes;
 kpftimes::FastTable::FastTable(size_t initX, size_t initY)
 		: table(NULL), dimX(initX), dimY(initY) {
 	if (initX <= 0 || initY <= 0) {
-		throw std::invalid_argument("Cannot create FastTable with negative dimensions");
+		throw std::invalid_argument("Cannot create FastTable with zero dimensions");
 	}
 	table = new double[initX*initY];
 }

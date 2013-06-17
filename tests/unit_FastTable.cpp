@@ -1,189 +1,183 @@
 /** Test unit for FastTable class
- * @file unit_FastTable.cpp
+ * @file timescales/tests/unit_FastTable.cpp
  * @author Krzysztof Findeisen
  * @date Created July 20, 2011
- * @date Last modified July 20, 2011
+ * @date Last modified June 17, 2013
  */
 
-#include <ctime>
+#include "../warnflags.h"
+
+// Boost.Test uses C-style casts and non-virtual destructors
+#ifdef GNUC_COARSEWARN
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#pragma GCC diagnostic ignored "-Weffc++"
+#endif
+
+// Boost.Test uses C-style casts and non-virtual destructors
+#ifdef GNUC_FINEWARN
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#pragma GCC diagnostic ignored "-Weffc++"
+#endif
 
 #include <boost/test/unit_test.hpp>
+
+// Re-enable all compiler warnings
+#ifdef GNUC_FINEWARN
+#pragma GCC diagnostic pop
+#endif
+
+#include <ctime>
 #include "../utils.h"
 
-using kpftimes::FastTable;
+namespace kpftimes { namespace test {
 
-// Data common to the test cases
+/** Data common to the test cases.
+ *
+ * Contains @ref FastTable "FastTables" of varying dimensions
+ */
 class FtData {
 public: 
 	const static size_t TEST_COUNT   =   10;
 	const static size_t TEST_BIGSIZE = 1000;
 
-	//@test FastTable(1, 1). Expected behavior: success. Can iterate over elements with external loop.
-	//@test FastTable(4, 5). Expected behavior: success. Can iterate over elements with external loop.
-	//@test FastTable(5, 4). Expected behavior: success. Can iterate over elements with external loop.
+	/** Defines the data for each test case.
+	 *
+	 * @exception std::bad_alloc Thrown if there is not enough memory to 
+	 *	store the testing data.
+	 *
+	 * @exceptsafe Object construction is atomic.
+	 */
 	FtData() : FastTable11(1,1), FastTable45(4,5), FastTable54(5,4) {
-printf("DEBUG: constructing FtData\n");
-		FastTable11.at(1, 1) = 42.0;
+		BOOST_CHECK_NO_THROW(FastTable11.at(1, 1) = 42.0);
 		
 		for(size_t x = 0; x < 4; x++) {
 			for(size_t y = 0; y < 5; y++) {
-				FastTable45.at(x, y) = x + (x+1)*(y+1) - y;
+				BOOST_CHECK_NO_THROW(FastTable45.at(x, y) = x + (x+1)*(y+1) - y);
 			}
 		}
 		for(size_t x = 0; x < 5; x++) {
 			for(size_t y = 0; y < 4; y++) {
-				FastTable54.at(x, y) = y + (x+1)*(y+1) - x;
-			}
-		}
-printf("DEBUG: FtData complete\n");
-	}
-	
-	~FtData() {
-printf("DEBUG: destroying FtData\n");
-	}
-	
-	void testCopy(FastTable& oldTable, FastTable& copyTable, size_t sizeX, size_t sizeY) {
-		// Overall test strategy:
-		//	1. Make a copy
-		//	2. Verify that it's equal to the original
-		//	3. Edit the copy
-		//	4. Verify that it's no longer equal to the original
-		
-		for(size_t x = 0; x < sizeX; x++) {
-			for(size_t y = 0; y < sizeY; y++) {
-				BOOST_CHECK_EQUAL(copyTable.at(x, y), oldTable.at(x, y));
-			}
-		}
-		for(size_t x = 0; x < sizeX; x++) {
-			for(size_t y = 0; y < sizeY; y++) {
-				copyTable.at(x, y) = copyTable.at(x, y) + 42.0;
-			}
-		}
-		for(size_t x = 0; x < sizeX; x++) {
-			for(size_t y = 0; y < sizeY; y++) {
-				BOOST_CHECK_NE(copyTable.at(x, y), oldTable.at(x, y));
+				BOOST_CHECK_NO_THROW(FastTable54.at(x, y) = y + (x+1)*(y+1) - x);
 			}
 		}
 	}
 	
-	FastTable FastTable11, FastTable45, FastTable54;
+	FastTable FastTable11;
+	FastTable FastTable45;
+	FastTable FastTable54;
 };
 
-BOOST_FIXTURE_TEST_SUITE(test_FastTable, FtData)
-
-BOOST_AUTO_TEST_CASE(constructors) {
-printf("DEBUG: beginning constructors check\n");
-	//@test FastTable(-1, 1). Expected behavior: throw invalid_argument
-	//BOOST_CHECK_THROW(FastTable(-1, 1), std::invalid_argument);
+/** Tests whether two @ref FastTable "FastTables" are identical but independent copies
+ *
+ * @param[in]  oldTable The original copy of the table
+ * @param[in] copyTable The new copy of the table
+ * @param[in] sizeX, sizeY The dimensions of both @p oldTable and @p copyTable
+ *
+ * @post @p oldTable and @p copyTable may be modified as part of the testing
+ *
+ * @exceptsafe Does not throw exceptions.
+ */
+void testCopy(FastTable& oldTable, FastTable& copyTable, size_t sizeX, size_t sizeY) {
+	// Overall test strategy:
+	//	1. Make a copy
+	//	2. Verify that it's equal to the original
+	//	3. Edit the copy
+	//	4. Verify that it's no longer equal to the original
 	
+	for(size_t x = 0; x < sizeX; x++) {
+		for(size_t y = 0; y < sizeY; y++) {
+			BOOST_CHECK_EQUAL(copyTable.at(x, y), oldTable.at(x, y));
+		}
+	}
+	for(size_t x = 0; x < sizeX; x++) {
+		for(size_t y = 0; y < sizeY; y++) {
+			copyTable.at(x, y) += 42.0;
+		}
+	}
+	for(size_t x = 0; x < sizeX; x++) {
+		for(size_t y = 0; y < sizeY; y++) {
+			BOOST_CHECK_NE(copyTable.at(x, y), oldTable.at(x, y));
+		}
+	}
+}
+
+/** Test cases for FastTable construction and other fundamental operations 
+ *	that must not rely on FtData
+ * 
+ * @class BoostTest::test_FastTableBuild
+ */
+BOOST_AUTO_TEST_SUITE(test_FastTableBuild)
+
+/** Tests whether FastTable constructor accepts appropriate arguments
+ *
+ * @exceptsafe Does not throw exceptions.
+ */
+BOOST_AUTO_TEST_CASE(constructors) {
 	//@test FastTable(0, 1). Expected behavior: throw invalid_argument
 	BOOST_CHECK_THROW(FastTable(0, 1), std::invalid_argument);
-
-	//@test FastTable(1, -1). Expected behavior: throw invalid_argument
-	//BOOST_CHECK_THROW(FastTable(1, -1), std::invalid_argument);
 
 	//@test FastTable(1, 0). Expected behavior: throw invalid_argument
 	BOOST_CHECK_THROW(FastTable(1, 0), std::invalid_argument);
 	
-	// Valid constructors already used in FtData
-printf("DEBUG: constructors check complete\n");
+	// Valid constructors mostly tested in FtData
+	// Just make sure they don't throw
+	BOOST_CHECK_NO_THROW(FastTable(1,1));
+	BOOST_CHECK_NO_THROW(FastTable(4,5));
+	BOOST_CHECK_NO_THROW(FastTable(5,4));
 }
 
-BOOST_AUTO_TEST_CASE(access) {
-printf("DEBUG: beginning access check\n");
-	//@test FastTable(4, 5).at(3, 2). Expected behavior: update reflected by separate .at().
-	FastTable45.at(3, 2) = 42.2;
-	// Exact equality check, because no math operations should have occurred
-	BOOST_CHECK_EQUAL(FastTable45.at(3, 2), 42.2);
-	
-	//@test FastTable(4, 5).at(0, 2). Expected behavior: update reflected by separate .at().
-	FastTable45.at(0, 2) = -10.56;
-	BOOST_CHECK_EQUAL(FastTable45.at(0, 2), -10.56);
-	
-	//@test FastTable(4, 5).at(2, 0). Expected behavior: update reflected by separate .at().
-	FastTable45.at(2, 0) = 1234.56789;
-	BOOST_CHECK_EQUAL(FastTable45.at(2, 0), 1234.56789);
+BOOST_AUTO_TEST_SUITE_END()
 
-	//@test FastTable(4, 5).at(2, 4). Expected behavior: update reflected by separate .at().
-	FastTable45.at(2, 4) = 1e-5;
-	BOOST_CHECK_EQUAL(FastTable45.at(2, 4), 1e-5);
+/** Test cases for general FastTable operations
+ * 
+ * @class BoostTest::test_FastTable
+ */
+BOOST_FIXTURE_TEST_SUITE(test_FastTable, FtData)
+
+/** Tests whether FastTable element access behaves consistently
+ *
+ * @exceptsafe Does not throw exceptions.
+ */
+BOOST_AUTO_TEST_CASE(access) {
+	/** @test FastTable(4, 5).at(3, 2). Expected behavior: update reflected by separate .at().
+	 */
+	BOOST_CHECK_NO_THROW(FastTable45.at(3, 2) = 42.2));
+	// Exact equality check, because no math operations should have occurred
+	BOOST_CHECK_NO_THROW(BOOST_CHECK_EQUAL(FastTable45.at(3, 2), 42.2));
+	
+	/** @test FastTable(4, 5).at(0, 2). Expected behavior: update reflected by separate 
+	 .at().
+	 */
+	BOOST_CHECK_NO_THROW(FastTable45.at(0, 2) = -10.56);
+	BOOST_CHECK_NO_THROW(BOOST_CHECK_EQUAL(FastTable45.at(0, 2), -10.56));
+	
+	/** @test FastTable(4, 5).at(2, 0). Expected behavior: update reflected by separate .at().
+	 */
+	BOOST_CHECK_NO_THROW(FastTable45.at(2, 0) = 1234.56789);
+	BOOST_CHECK_NO_THROW(BOOST_CHECK_EQUAL(FastTable45.at(2, 0), 1234.56789));
+
+	/** @test FastTable(4, 5).at(2, 4). Expected behavior: update reflected by separate .at().
+	 */
+	BOOST_CHECK_NO_THROW(FastTable45.at(2, 4) = 1e-5);
+	BOOST_CHECK_NO_THROW(BOOST_CHECK_EQUAL(FastTable45.at(2, 4), 1e-5));
 	
 	// Now check that we haven't overwritten anything
-	BOOST_CHECK_EQUAL(FastTable45.at(3, 2), 42.2);
-	BOOST_CHECK_EQUAL(FastTable45.at(2, 0), 1234.56789);
-	BOOST_CHECK_EQUAL(FastTable45.at(2, 4), 1e-5);
-	BOOST_CHECK_EQUAL(FastTable45.at(0, 2), -10.56);
-printf("DEBUG: access check complete\n");
+	BOOST_CHECK_NO_THROW(BOOST_CHECK_EQUAL(FastTable45.at(3, 2), 42.2));
+	BOOST_CHECK_NO_THROW(BOOST_CHECK_EQUAL(FastTable45.at(2, 0), 1234.56789));
+	BOOST_CHECK_NO_THROW(BOOST_CHECK_EQUAL(FastTable45.at(2, 4), 1e-5));
+	BOOST_CHECK_NO_THROW(BOOST_CHECK_EQUAL(FastTable45.at(0, 2), -10.56));
 }
 
-/*BOOST_AUTO_TEST_CASE(stack_speed) {
-	//@test FastTable(1000, 1000).at(x,y) = x+y±x*y iteration in both directions. 
-	//	Expected behavior: y-inner loop faster than x-inner loop for 10 out of 10 
-	//	objects.
-	for (size_t nTest = 0; nTest < TEST_COUNT; nTest++) {
-		FastTable speedTable(TEST_BIGSIZE, TEST_BIGSIZE);
-		
-		time_t startFast, endFast;
-		startFast = time(NULL);
-		for(size_t x = 0; x < TEST_BIGSIZE; x++) {
-			for(size_t y = 0; y < TEST_BIGSIZE; y++) {
-				speedTable.at(x, y) = x + y + x*y;
-			}
-		}
-		endFast = time(NULL);
-
-		time_t startSlow, endSlow;
-		startSlow = time(NULL);
-		for(size_t y = 0; y < TEST_BIGSIZE; y++) {
-			for(size_t x = 0; x < TEST_BIGSIZE; x++) {
-				speedTable.at(x, y) = x + y + x*y;
-			}
-		}
-		endSlow = time(NULL);
-
-		// Are we faster?
-		BOOST_CHECK_LT(difftime(endFast, startFast), difftime(endSlow, startSlow));
-	}
-}
-
-BOOST_AUTO_TEST_CASE(heap_speed) {
-	//@test FastTable(1000, 1000).at(x,y) = x+y±x*y iteration in both directions. 
-	//	Expected behavior: y-inner loop faster than x-inner loop for 10 out of 10 
-	//	objects.
-	for (size_t nTest = 0; nTest < TEST_COUNT; nTest++) {
-		FastTable *speedTable = new FastTable(TEST_BIGSIZE, TEST_BIGSIZE);
-		
-		time_t startFast, endFast;
-		startFast = time(NULL);
-		for(size_t x = 0; x < TEST_BIGSIZE; x++) {
-			for(size_t y = 0; y < TEST_BIGSIZE; y++) {
-				speedTable->at(x, y) = x + y + x*y;
-			}
-		}
-		endFast = time(NULL);
-
-		delete speedTable;		
-
-		speedTable = new FastTable(TEST_BIGSIZE, TEST_BIGSIZE);
-		
-		time_t startSlow, endSlow;
-		startSlow = time(NULL);
-		for(size_t y = 0; y < TEST_BIGSIZE; y++) {
-			for(size_t x = 0; x < TEST_BIGSIZE; x++) {
-				speedTable->at(x, y) = x + y + x*y;
-			}
-		}
-		endSlow = time(NULL);
-
-		delete speedTable;
-		
-		// Are we faster?
-		BOOST_CHECK_LT(difftime(endFast, startFast), difftime(endSlow, startSlow));
-	}
-}
-
+/** Tests whether the FastTable copy-constructor creates correct copies
+ *
+ * @exception std::bad_alloc Thrown if there is not enough memory to copy the objects.
+ *
+ * @exceptsafe The function arguments and the test case are unchanged in 
+ *	the event of an exception.
+ */
 BOOST_AUTO_TEST_CASE(copyconstruction) {
-	// This is a nontrivial test, so it's been placed in FtData::testCopy()
+	// This is a nontrivial test, so it's been placed in testCopy()
 		
 	//@test FastTable(1, 1). Expected behavior: success. Can iterate over 
 	//	elements with external loop and edit independently.
@@ -201,8 +195,15 @@ BOOST_AUTO_TEST_CASE(copyconstruction) {
 	testCopy(FastTable54, newTable3, 5, 4);
 }
 
+/** Tests whether the FastTable assignment operator creates correct copies
+ *
+ * @exception std::bad_alloc Thrown if there is not enough memory to copy the objects.
+ *
+ * @exceptsafe The function arguments and the test case are unchanged in 
+ *	the event of an exception.
+ */
 BOOST_AUTO_TEST_CASE(assignment) {
-	// This is a nontrivial test, so it's been placed in FtData::testCopy()
+	// This is a nontrivial test, so it's been placed in testCopy()
 		
 	//@test FastTable(1, 1) = FastTable(1, 1). Expected behavior: success. Can iterate over elements with external loop and edit independently.
 	FastTable newTable1(1, 1);
@@ -219,6 +220,86 @@ BOOST_AUTO_TEST_CASE(assignment) {
 	FastTable newTable3(4, 5), newTable4(5, 4);
 	BOOST_CHECK_THROW(newTable3 = FastTable54, std::domain_error);
 	BOOST_CHECK_THROW(newTable4 = FastTable45, std::domain_error);
-}*/
-	
+}
+
+/** Tests whether a FastTable allocated on the stack has faster element 
+ *	access in the y direction than the x direction
+ *
+ * @exceptsafe Does not throw exceptions.
+ */
+BOOST_AUTO_TEST_CASE(stack_speed) {
+	/** @test FastTable(1000, 1000).at(x,y) = x+y±x*y iteration in both directions. 
+	 *	Expected behavior: y-inner loop faster than x-inner loop for 10 out of 10 
+	 *	objects.
+	 */
+	for (size_t nTest = 0; nTest < TEST_COUNT; nTest++) {
+		FastTable speedTable(TEST_BIGSIZE, TEST_BIGSIZE);
+		
+		clock_t startFast, endFast;
+		startFast = clock();
+		for(size_t x = 0; x < TEST_BIGSIZE; x++) {
+			for(size_t y = 0; y < TEST_BIGSIZE; y++) {
+				speedTable.at(x, y) = x + y + x*y;
+			}
+		}
+		endFast = clock();
+
+		clock_t startSlow, endSlow;
+		startSlow = clock();
+		for(size_t y = 0; y < TEST_BIGSIZE; y++) {
+			for(size_t x = 0; x < TEST_BIGSIZE; x++) {
+				speedTable.at(x, y) = x + y + x*y;
+			}
+		}
+		endSlow = clock();
+
+		// Are we faster?
+		BOOST_CHECK_LT(endFast - startFast, endSlow - startSlow);
+	}
+}
+
+/** Tests whether a FastTable allocated on the heap has faster element 
+ *	access in the y direction than the x direction
+ *
+ * @exceptsafe Does not throw exceptions.
+ */
+BOOST_AUTO_TEST_CASE(heap_speed) {
+	/** @test FastTable(1000, 1000).at(x,y) = x+y±x*y iteration in both directions. 
+	 *	Expected behavior: y-inner loop faster than x-inner loop for 10 out of 10 
+	 *	objects.
+	 */
+	for (size_t nTest = 0; nTest < TEST_COUNT; nTest++) {
+		FastTable *speedTable = new FastTable(TEST_BIGSIZE, TEST_BIGSIZE);
+		
+		clock_t startFast, endFast;
+		startFast = clock();
+		for(size_t x = 0; x < TEST_BIGSIZE; x++) {
+			for(size_t y = 0; y < TEST_BIGSIZE; y++) {
+				speedTable->at(x, y) = x + y + x*y;
+			}
+		}
+		endFast = clock();
+
+		delete speedTable;		
+
+		speedTable = new FastTable(TEST_BIGSIZE, TEST_BIGSIZE);
+		
+		clock_t startSlow, endSlow;
+		startSlow = clock();
+		for(size_t y = 0; y < TEST_BIGSIZE; y++) {
+			for(size_t x = 0; x < TEST_BIGSIZE; x++) {
+				speedTable->at(x, y) = x + y + x*y;
+			}
+		}
+		endSlow = clock();
+
+		delete speedTable;
+		
+		// Are we faster?
+		BOOST_CHECK_LT(endFast - startFast, endSlow - startSlow);
+	}
+}
+
 BOOST_AUTO_TEST_SUITE_END()
+
+}}		// end kpftimes::test

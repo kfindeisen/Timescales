@@ -14,11 +14,9 @@
  *
  * The library is organized as a series of global functions under the 
  * kpftimes namespace, rather than as an object heirarchy. This architecture 
- * was chosen in part for its efficiency (i.e. avoiding the memory overhead 
- * of constructing objects to represent each periodogram or other function), 
- * but mainly for its simplicity. 
- * Each function performs a single, narrowly defined task, making it 
- * (hopefully!) easy to chain functions together into pipelines.
+ * was chosen for its simplicity: each function performs a single, narrowly 
+ * defined task, making it (hopefully!) easy to chain functions together 
+ * into pipelines.
  * 
  * @section metahelp About this Documentation
  * 
