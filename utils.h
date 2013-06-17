@@ -2,7 +2,7 @@
  * @file utils.h
  * @author Krzysztof Findeisen
  * @date Created April 13, 2011
- * @date Last modified July 24, 2011
+ * @date Last modified June 17, 2013
  */
  
 #include <stdexcept>
@@ -144,9 +144,14 @@ template <class ForwardIterator> 				// Iterator to use
 	if (count <= 1) {
 		throw std::invalid_argument("Not enough data to compute variance");
 	}
+	
+	// Force floating-point arithmetic to avoid inconsistencies in 
+	//	integer division rounding conventions
+	// Delayed conversion because ++ operator is inaccurate for large doubles
+	double dcount = static_cast<double>(count);
 
 	// Minimize number of divisions and maximize dividend in case value_type is integral
-	return static_cast<Value>((sumsq - sum*sum/count)/(count-1));
+	return static_cast<Value>((sumsq - sum*sum/dcount)/(dcount-1));
 }
 
 /** @} */
