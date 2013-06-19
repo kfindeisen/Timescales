@@ -8,14 +8,14 @@ include ../makefile.inc
 #---------------------------------------
 # Select all files
 PROJ    := test
-SOURCES := driver.cpp unit_stats.cpp unit_lsNormalEdf.cpp unit_FastTable.cpp
+SOURCES := driver.cpp unit_lsNormalEdf.cpp unit_FastTable.cpp
 OBJS    := $(SOURCES:.cpp=.o)
-LIBS    := timescales gsl gslcblas boost_unit_test_framework-mt 
+LIBS    := timescales kpfutils gsl gslcblas boost_unit_test_framework-mt 
 
 #---------------------------------------
 # Primary build option
 $(PROJ): $(OBJS)
 	@echo "Linking $@ with $(LIBS:%=-l%)"
-	@$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $(filter %.o,$^) $(DIRS:%=-l%) $(LIBS:%=-l%) $(LIBDIRS:%=-L %) -L .
+	@$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $(filter %.o,$^) $(DIRS:%=-l%) $(LIBS:%=-l%) $(LIBDIRS:%=-L %) -L ../../common/ -L .
 
 include ../makefile.common

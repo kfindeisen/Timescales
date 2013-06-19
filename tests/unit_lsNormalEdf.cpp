@@ -33,12 +33,14 @@
 #include <boost/smart_ptr.hpp>
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>
+#include "../../common/alloc.tmp.h"
 #include "../../common/stats.tmp.h"
 #include "../timescales.h"
 
 namespace kpftimes { namespace test {
 
 using boost::shared_ptr;
+using kpfutils::checkAlloc;
 
 /** Data common to the test cases.
  *
@@ -66,10 +68,8 @@ public:
 		times2dupe  .push_back(30.0);
 		times2dupe  .push_back(30.0);
 		
-		shared_ptr<gsl_rng> timeGen(gsl_rng_alloc(gsl_rng_taus2), &gsl_rng_free);
-		if (timeGen.get() == NULL) {
-			throw std::bad_alloc();
-		}
+		shared_ptr<gsl_rng> timeGen(checkAlloc(gsl_rng_alloc(gsl_rng_taus2)), 
+			&gsl_rng_free);
 		gsl_rng_set(timeGen.get(), 42);
 		
 		for(size_t i = 0; i < 100; i++) {
@@ -196,15 +196,8 @@ void testEdf(const DoubleVec& times, const DoubleVec& freqs, size_t nSims) {
 	 * @todo: add automated oracle for EDFs
 	 */
 	 if (nSims >= 100) {
-		shared_ptr<FILE> trueEdf(fopen("trueedf.txt", "w"), &fclose);
-		if (trueEdf.get() == NULL) {
-			throw std::invalid_argument("Could not open trueedf.txt.");
-		}
-		
-		shared_ptr<FILE> ourEdf(fopen("ouredf.txt", "w"), &fclose);
-		if (ourEdf.get() == NULL) {
-			throw std::invalid_argument("Could not open ouredf.txt.");
-		}
+	 	shared_ptr<FILE> trueEdf = kpfutils::fileCheckOpen("trueedf.txt", "w");
+	 	shared_ptr<FILE>  ourEdf = kpfutils::fileCheckOpen( "ouredf.txt", "w");
 		
 		std::sort(highestPeak.begin(), highestPeak.end());
 		for(size_t i = 0; i < highestPeak.size(); i++) {
