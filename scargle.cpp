@@ -56,6 +56,7 @@
 #include <gsl/gsl_rng.h>
 #include "timescales.h"
 #include "utils.h"
+#include "../common/stats.tmp.h"
 
 #if USELFP
 #include <lfp/lfp.h>
@@ -128,7 +129,7 @@ void kpftimes::lombScargle(const DoubleVec &times, const DoubleVec &fluxes,
 	}
 
 	// Full sample variance
-	double var   = kpftimes::variance(fluxes.begin(), fluxes.end());
+	double var   = kpfutils::variance(fluxes.begin(), fluxes.end());
 	if (var <= 0.0) {
 		throw std::invalid_argument("fluxes contains only one unique date");
 	}
@@ -174,7 +175,7 @@ void kpftimes::lombScargle(const DoubleVec &times, const DoubleVec &fluxes,
 	// computing the periodogram for the original lc
    
 	// Subtract mean from data
-	double meanF = kpftimes::mean(fluxes.begin(), fluxes.end());
+	double meanF = kpfutils::mean(fluxes.begin(), fluxes.end());
 	
 	DoubleVec fluxes0(nTimes);
 	for(i = 0; i < nTimes; i++) {
@@ -392,7 +393,7 @@ double kpftimes::lsThreshold(const DoubleVec &times, const DoubleVec &freq,
 		}
 
 		// Full sample variance
-		double var   = kpftimes::variance(fluxes.begin(), fluxes.end());
+		double var   = kpfutils::variance(fluxes.begin(), fluxes.end());
 		//double cnnoise = sqrt(cnVar);
 
 		#if USELFP
@@ -647,7 +648,7 @@ void kpftimes::lsNormalEdf(const DoubleVec &times, const DoubleVec &freqs,
 		}
 
 		// Full sample variance
-		double var   = kpftimes::variance(fluxes.begin(), fluxes.end());
+		double var   = kpfutils::variance(fluxes.begin(), fluxes.end());
 
 		#if USELFP
 		PStart(4);

@@ -2,7 +2,7 @@
  * @file autocorr.cpp
  * @author Krzysztof Findeisen
  * @date Created February 16, 2011
- * @date Last modified April 15, 2011
+ * @date Last modified June 18, 2013
  */ 
 
 #include <complex>
@@ -10,8 +10,8 @@
 #include <gsl/gsl_fft_halfcomplex.h>
 #include "dft.h"
 #include "timescales.h"
-#include "utils.h"
 #include <cmath>
+#include "../common/stats.tmp.h"
 
 /** Calculates the autocorrelation function for a time series. 
  * 
@@ -98,7 +98,7 @@ void kpftimes::autoCorr(const DoubleVec &times, const DoubleVec &fluxes,
 	//	window function
 	// While we're at it, also test for non-uniqueness and sorting
 	DoubleVec zeroFluxes(nTimes), oneFluxes(nTimes);
-	double meanFlux = mean(fluxes.begin(), fluxes.end());
+	double meanFlux = kpfutils::mean(fluxes.begin(), fluxes.end());
 	bool diffValues = false, sortedTimes = true;
 	for(size_t i = 0; i < nTimes; i++) {
 		zeroFluxes[i] = fluxes[i] - meanFlux;

@@ -33,8 +33,8 @@
 #include <boost/smart_ptr.hpp>
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>
+#include "../../common/stats.tmp.h"
 #include "../timescales.h"
-#include "../utils.h"
 
 namespace kpftimes { namespace test {
 
@@ -162,8 +162,8 @@ void testEdf(const DoubleVec& times, const DoubleVec& freqs, size_t nSims) {
 	BOOST_REQUIRE_EQUAL(probs .size(), nSims);
 	
 	// powers and probs should both be sorted
-	BOOST_REQUIRE(isSortedAsc(powers));
-	BOOST_REQUIRE(isSortedAsc(probs ));
+	BOOST_REQUIRE(kpfutils::isSorted(powers.begin(), powers.end()));
+	BOOST_REQUIRE(kpfutils::isSorted(probs .begin(), probs .end()));
 	
 	// powers matches output of lombScargle... at least, in a 
 	//	statistical sense

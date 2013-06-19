@@ -119,39 +119,3 @@ double& kpftimes::FastTable::at(size_t x, size_t y) {
 	// need adjacent y-indices to be adjacent in memory
 	return table[dimY*x + y];
 }
-
-/** Tests whether the argument is sorted
- * 
- * @param[in] list	Times at which data were taken
- * @return TRUE if and only if the argument is sorted in ascending order.
- *
- * @perform O(list.size()) time
- * 
- * @test Empty list. Expected behavior: true.
- * @test List of size 1. Expected behavior: true.
- * @test List of size 2, sorted asc. Expected behavior: true.
- * @test List of size 2, sorted desc. Expected behavior: false.
- * @test List of size 10, list[i] = i^2. Expected behavior: true.
- * @test List of size 10, list[i] = (i-5)^2. Expected behavior: false.
- * @test List of size 10, random elements. Expected behavior: false.
- */
-bool kpftimes::isSortedAsc(const DoubleVec &list) {
-	if (list.size() <= 1) {
-		return true;
-	}
-	
-	bool foundError = false;
-	DoubleVec::const_iterator v1 = list.begin();
-	DoubleVec::const_iterator v2 = v1 + 1;
-	while(!foundError && v2 != list.end()) {
-		if (*v1 > *v2) {
-			foundError = true;
-		}
-		else {
-			v1++;
-			v2++;
-		}
-	}
-	
-	return !foundError;
-}

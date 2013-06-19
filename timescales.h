@@ -53,6 +53,10 @@
  * 
  * @section changelog Recent changes
  *
+ * @subsection v04 0.4.0-devel
+ *
+ * @li Removed statistics routines from utils.h to common/stats.tmp.h
+ *
  * @subsection v022 0.2.2
  *
  * @li Removed exception specifications from all functions

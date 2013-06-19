@@ -60,11 +60,11 @@ example: examples | $(PROJ)
 .PHONY: unittest
 unittest: tests | $(PROJ)
 
-#.PHONY: autotest
-#autotest: $(PROJ) unittest
-#	@echo "Beginning regression test suite..."
-#	@echo "Tests started on `date`"
-#	@cd tests && ./autotest.sh ; echo "Tests completed on `date`"
+.PHONY: autotest
+autotest: $(PROJ) unittest
+	@echo "Beginning regression test suite..."
+	@echo "Tests started on `date`"
+	@cd tests && ./test ; echo "Tests completed on `date`"
 
 #---------------------------------------
 # Build program, test suite, and documentation

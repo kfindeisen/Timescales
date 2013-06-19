@@ -2,11 +2,11 @@
  * @file specialfreqs.cpp
  * @author Krzysztof Findeisen
  * @date Created April 13, 2011
- * @date Last modified April 13, 2011
+ * @date Last modified June 18, 2013
  */ 
 
+#include "../common/stats.tmp.h"
 #include "timescales.h"
-#include "utils.h"
 
 using namespace kpftimes;
 
@@ -111,7 +111,7 @@ double kpftimes::maxFreq(const DoubleVec &times) {
 
 	// Test for sort in O(N)
 	// Faster than sorting, O(N log N), or unsorted test, O(N^2)
-	if(!isSortedAsc(times)) {
+	if(!kpfutils::isSorted(times.begin(), times.end())) {
 		throw std::invalid_argument("times is unsorted");
 	}
 

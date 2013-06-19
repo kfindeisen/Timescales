@@ -130,126 +130,126 @@ BOOST_FIXTURE_TEST_SUITE(test_stats, StatsData)
  *
  * @exceptsafe Does not throw exceptions.
  */
-BOOST_AUTO_TEST_CASE(mean)
-{
-	/** @test List of ints, length 0. Expected behavior: throw invalid_argument.
-	 */
-	BOOST_CHECK_THROW(kpftimes::mean(emptyList.begin(), emptyList.end()), 
-		std::invalid_argument);
-	
-	/** @test List of ints, length 1. Expected behavior: return list[0]
-	 */
-	BOOST_CHECK_NO_THROW(BOOST_CHECK_EQUAL(
-		kpftimes::mean(oneList.begin(), oneList.end()), 
-		oneList.front()));
-	
-	for (size_t nTest = 0; nTest < TEST_COUNT; nTest++) {
-		int trueMean = static_cast<int>(
-			gsl_stats_int_mean(intArray[nTest].get(), 1, TEST_LEN));
-		/** @test List of ints, length 100, randomly generated. Expected behavior: 
-		 * 	agrees with gsl_stats_mean in 10 out of 10 trials.
-		 */
-		BOOST_CHECK_NO_THROW(BOOST_CHECK_EQUAL(
-			kpftimes::mean(intList[nTest].begin(), intList[nTest].end()), 
-			trueMean));
-		
-		/** @test Array of ints, length 100, randomly generated. Expected behavior: 
-		 *	agrees with gsl_stats_mean in 10 out of 10 trials.
-		 */
-		BOOST_CHECK_NO_THROW(BOOST_CHECK_EQUAL(
-			kpftimes::mean(intArray[nTest].get(), intArray[nTest].get()+TEST_LEN), 
-			trueMean));
-	}
-
-	for (size_t nTest = 0; nTest < TEST_COUNT; nTest++) {
-		double trueMean = gsl_stats_mean(dblArray[nTest].get(), 1, TEST_LEN);
-		/** @test List of doubles, length 100, randomly generated. Expected behavior: 
-		 *	agrees with gsl_stats_mean to within 1e-8 in 10 out of 10 trials.
-		 */
-		BOOST_CHECK_NO_THROW(BOOST_CHECK_CLOSE(
-			kpftimes::mean(dblList[nTest].begin(), dblList[nTest].end()), 
-			trueMean, TEST_TOLERANCE));
-		
-		/** @test Vector of doubles, length 100, randomly generated. Expected behavior: 
-		 *	agrees with gsl_stats_mean to within 1e-8 in 10 out of 10 trials.
-		 */
-		BOOST_CHECK_NO_THROW(BOOST_CHECK_CLOSE(
-			kpftimes::mean(dblVec[nTest].begin(), dblVec[nTest].end()), 
-			trueMean, TEST_TOLERANCE));
-		
-		/** @test Array of doubles, length 100, randomly generated. Expected behavior: 
-		 *	agrees with gsl_stats_mean to within 1e-8 in 10 out of 10 trials.
-		 */
-		BOOST_CHECK_NO_THROW(BOOST_CHECK_CLOSE(
-			kpftimes::mean(dblArray[nTest].get(), dblArray[nTest].get()+TEST_LEN), 
-			trueMean, TEST_TOLERANCE));
-	}
-}
-
-/** Tests whether variance() works as advertised
- *
- * @exceptsafe Does not throw exceptions.
- */
-BOOST_AUTO_TEST_CASE(variance)
-{
-	/** @test List of ints, length 0. Expected behavior: throw invalid_argument.
-	 */
-	BOOST_CHECK_THROW(kpftimes::variance(emptyList.begin(), emptyList.end()), 
-		std::invalid_argument);
-	
-	/** @test List of ints, length 1. Expected behavior: throw invalid_argument.
-	 */
-	BOOST_CHECK_THROW(kpftimes::variance(oneList.begin(), oneList.end()), 
-		std::invalid_argument);
-	
-	/** @test List of ints, length 2. Expected behavior: return 
-	 *		(list::back()-list::front())^2/2
-	 */
-	{
-		int trueVar = twoList.back()-twoList.front();
-		trueVar *= trueVar;
-		trueVar /= 2;
-		BOOST_CHECK_NO_THROW(BOOST_CHECK_EQUAL(
-			kpftimes::variance(twoList.begin(), twoList.end()), 
-			trueVar));
-	}
-	
-	for (size_t nTest = 0; nTest < TEST_COUNT; nTest++) {
-		int trueVar = static_cast<int>(
-			gsl_stats_int_variance(intArray[nTest].get(), 1, TEST_LEN));
-		/** @test List of ints, length 100, randomly generated. Expected behavior: 
-		 *	agrees with gsl_stats_variance in 10 out of 10 trials.
-		 */
-		BOOST_CHECK_NO_THROW(BOOST_CHECK_EQUAL(
-			kpftimes::variance(intList[nTest].begin(), intList[nTest].end()), 
-			trueVar));
-	}
-
-	for (size_t nTest = 0; nTest < TEST_COUNT; nTest++) {
-		double trueVar = gsl_stats_variance(dblArray[nTest].get(), 1, TEST_LEN);
-		/** @test List of doubles, length 100, randomly generated. Expected behavior: 
-		 *	agrees with gsl_stats_variance to within 1e-8 in 10 out of 10 trials.
-		 */
-		BOOST_CHECK_NO_THROW(BOOST_CHECK_CLOSE(
-			kpftimes::variance(dblList[nTest].begin(), dblList[nTest].end()),
-			trueVar, TEST_TOLERANCE));
-		
-		/** @test Vector of doubles, length 100, randomly generated. Expected behavior: 
-		 *	agrees with gsl_stats_variance to within 1e-8 in 10 out of 10 trials.
-		 */
-		BOOST_CHECK_NO_THROW(BOOST_CHECK_CLOSE(
-			kpftimes::variance(dblVec[nTest].begin(), dblVec[nTest].end()), 
-			trueVar, TEST_TOLERANCE));
-		
-		/** @test Array of doubles, length 100, randomly generated. Expected behavior: 
-		 *	agrees with gsl_stats_variance to within 1e-8 in 10 out of 10 trials.
-		 */
-		BOOST_CHECK_NO_THROW(BOOST_CHECK_CLOSE(
-			kpftimes::variance(dblArray[nTest].get(), 
-			dblArray[nTest].get()+TEST_LEN), 
-			trueVar, TEST_TOLERANCE));
-	}
-}
+//BOOST_AUTO_TEST_CASE(mean)
+//{
+//	/** @test List of ints, length 0. Expected behavior: throw invalid_argument.
+//	 */
+//	BOOST_CHECK_THROW(kpftimes::mean(emptyList.begin(), emptyList.end()), 
+//		std::invalid_argument);
+//	
+//	/** @test List of ints, length 1. Expected behavior: return list[0]
+//	 */
+//	BOOST_CHECK_NO_THROW(BOOST_CHECK_EQUAL(
+//		kpftimes::mean(oneList.begin(), oneList.end()), 
+//		oneList.front()));
+//	
+//	for (size_t nTest = 0; nTest < TEST_COUNT; nTest++) {
+//		int trueMean = static_cast<int>(
+//			gsl_stats_int_mean(intArray[nTest].get(), 1, TEST_LEN));
+//		/** @test List of ints, length 100, randomly generated. Expected behavior: 
+//		 * 	agrees with gsl_stats_mean in 10 out of 10 trials.
+//		 */
+//		BOOST_CHECK_NO_THROW(BOOST_CHECK_EQUAL(
+//			kpftimes::mean(intList[nTest].begin(), intList[nTest].end()), 
+//			trueMean));
+//		
+//		/** @test Array of ints, length 100, randomly generated. Expected behavior: 
+//		 *	agrees with gsl_stats_mean in 10 out of 10 trials.
+//		 */
+//		BOOST_CHECK_NO_THROW(BOOST_CHECK_EQUAL(
+//			kpftimes::mean(intArray[nTest].get(), intArray[nTest].get()+TEST_LEN), 
+//			trueMean));
+//	}
+//
+//	for (size_t nTest = 0; nTest < TEST_COUNT; nTest++) {
+//		double trueMean = gsl_stats_mean(dblArray[nTest].get(), 1, TEST_LEN);
+//		/** @test List of doubles, length 100, randomly generated. Expected behavior: 
+//		 *	agrees with gsl_stats_mean to within 1e-8 in 10 out of 10 trials.
+//		 */
+//		BOOST_CHECK_NO_THROW(BOOST_CHECK_CLOSE(
+//			kpftimes::mean(dblList[nTest].begin(), dblList[nTest].end()), 
+//			trueMean, TEST_TOLERANCE));
+//		
+//		/** @test Vector of doubles, length 100, randomly generated. Expected behavior: 
+//		 *	agrees with gsl_stats_mean to within 1e-8 in 10 out of 10 trials.
+//		 */
+//		BOOST_CHECK_NO_THROW(BOOST_CHECK_CLOSE(
+//			kpftimes::mean(dblVec[nTest].begin(), dblVec[nTest].end()), 
+//			trueMean, TEST_TOLERANCE));
+//		
+//		/** @test Array of doubles, length 100, randomly generated. Expected behavior: 
+//		 *	agrees with gsl_stats_mean to within 1e-8 in 10 out of 10 trials.
+//		 */
+//		BOOST_CHECK_NO_THROW(BOOST_CHECK_CLOSE(
+//			kpftimes::mean(dblArray[nTest].get(), dblArray[nTest].get()+TEST_LEN), 
+//			trueMean, TEST_TOLERANCE));
+//	}
+//}
+//
+///** Tests whether variance() works as advertised
+// *
+// * @exceptsafe Does not throw exceptions.
+// */
+//BOOST_AUTO_TEST_CASE(variance)
+//{
+//	/** @test List of ints, length 0. Expected behavior: throw invalid_argument.
+//	 */
+//	BOOST_CHECK_THROW(kpftimes::variance(emptyList.begin(), emptyList.end()), 
+//		std::invalid_argument);
+//	
+//	/** @test List of ints, length 1. Expected behavior: throw invalid_argument.
+//	 */
+//	BOOST_CHECK_THROW(kpftimes::variance(oneList.begin(), oneList.end()), 
+//		std::invalid_argument);
+//	
+//	/** @test List of ints, length 2. Expected behavior: return 
+//	 *		(list::back()-list::front())^2/2
+//	 */
+//	{
+//		int trueVar = twoList.back()-twoList.front();
+//		trueVar *= trueVar;
+//		trueVar /= 2;
+//		BOOST_CHECK_NO_THROW(BOOST_CHECK_EQUAL(
+//			kpftimes::variance(twoList.begin(), twoList.end()), 
+//			trueVar));
+//	}
+//	
+//	for (size_t nTest = 0; nTest < TEST_COUNT; nTest++) {
+//		int trueVar = static_cast<int>(
+//			gsl_stats_int_variance(intArray[nTest].get(), 1, TEST_LEN));
+//		/** @test List of ints, length 100, randomly generated. Expected behavior: 
+//		 *	agrees with gsl_stats_variance in 10 out of 10 trials.
+//		 */
+//		BOOST_CHECK_NO_THROW(BOOST_CHECK_EQUAL(
+//			kpftimes::variance(intList[nTest].begin(), intList[nTest].end()), 
+//			trueVar));
+//	}
+//
+//	for (size_t nTest = 0; nTest < TEST_COUNT; nTest++) {
+//		double trueVar = gsl_stats_variance(dblArray[nTest].get(), 1, TEST_LEN);
+//		/** @test List of doubles, length 100, randomly generated. Expected behavior: 
+//		 *	agrees with gsl_stats_variance to within 1e-8 in 10 out of 10 trials.
+//		 */
+//		BOOST_CHECK_NO_THROW(BOOST_CHECK_CLOSE(
+//			kpftimes::variance(dblList[nTest].begin(), dblList[nTest].end()),
+//			trueVar, TEST_TOLERANCE));
+//		
+//		/** @test Vector of doubles, length 100, randomly generated. Expected behavior: 
+//		 *	agrees with gsl_stats_variance to within 1e-8 in 10 out of 10 trials.
+//		 */
+//		BOOST_CHECK_NO_THROW(BOOST_CHECK_CLOSE(
+//			kpftimes::variance(dblVec[nTest].begin(), dblVec[nTest].end()), 
+//			trueVar, TEST_TOLERANCE));
+//		
+//		/** @test Array of doubles, length 100, randomly generated. Expected behavior: 
+//		 *	agrees with gsl_stats_variance to within 1e-8 in 10 out of 10 trials.
+//		 */
+//		BOOST_CHECK_NO_THROW(BOOST_CHECK_CLOSE(
+//			kpftimes::variance(dblArray[nTest].get(), 
+//			dblArray[nTest].get()+TEST_LEN), 
+//			trueVar, TEST_TOLERANCE));
+//	}
+//}
 
 BOOST_AUTO_TEST_SUITE_END()
 
