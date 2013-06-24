@@ -1,10 +1,10 @@
 /** Brief demo of the Timescales capabilities. This program computes a single 
  *	periodogram and single autocorrelation function of an irregularly 
  *	sampled sinusoid.
- * @file example.cpp
+ * @file examples/example.cpp
  * @author Krzysztof Findeisen
  * @date Created February 14, 2011
- * @date Last modified April 15, 2011
+ * @date Last modified June 21, 2013
  */
 
 #include <algorithm>
@@ -12,9 +12,12 @@
 #include <cmath>
 #include <cstdio>
 #include <gsl/gsl_rng.h>
+#include <boost/math/constants/constants.hpp>
+#include <boost/smart_ptr.hpp>
 #include "../timescales.h"
 
 using namespace kpftimes;
+using boost::shared_ptr;
 
 /** Test driver for a simple user example.
  *
@@ -30,32 +33,35 @@ using namespace kpftimes;
  */
 int main()
 {
-	const double PI   = 3.1415927;
+	using boost::math::double_constants::two_pi;
 	const double FREQ = 5.432;
 	const double DELT = 1.0;
-	
-	FILE* hOutput = NULL;
-	gsl_rng* generator = gsl_rng_alloc(gsl_rng_ranlxd2);
-	// fixed seed, so program output will be the same from run to run
-	gsl_rng_set(generator, 42);
-	
+
 	//--------------------------------------------------
 	// Generate randomly sampled data
 	size_t N = 100;
 	DoubleVec t, x;
-	for(size_t i = 0; i < N; i++) {
-		t.push_back(DELT*gsl_rng_uniform(generator));
-	}
-	std::sort(t.begin(), t.end());
-	for(DoubleVec::const_iterator it = t.begin(); it != t.end(); it++) {
-		x.push_back(sin(2.0*PI*(*it)*FREQ));
+	{	
+		shared_ptr<gsl_rng> generator(gsl_rng_alloc(gsl_rng_ranlxd2), &gsl_rng_free);
+		// fixed seed, so program output will be the same from run to run
+		gsl_rng_set(generator.get(), 42);
+		
+		for(size_t i = 0; i < N; i++) {
+			t.push_back(DELT*gsl_rng_uniform(generator.get()));
+		}
+		std::sort(t.begin(), t.end());
+		
+		for(DoubleVec::const_iterator it = t.begin(); it != t.end(); it++) {
+			x.push_back(sin(two_pi*(*it)*FREQ));
+		}
 	}
 	
-	hOutput = fopen("test.obs.txt", "w");
-	for(size_t i = 0; i < t.size(); i++) {
-		fprintf(hOutput, "%.4f, %.4f\n", t[i], x[i]);
+	{
+		shared_ptr<FILE> hOutput(fopen("test.obs.txt", "w"), &fclose);
+		for(size_t i = 0; i < t.size(); i++) {
+			fprintf(hOutput.get(), "%.4f, %.4f\n", t[i], x[i]);
+		}
 	}
-	fclose(hOutput);
 
 	//--------------------------------------------------
 	// Generate periodogram
@@ -64,13 +70,12 @@ int main()
 		freqGen(t, freq);			// Fill freq[] with a basic grid
 		lombScargle(t, x, freq, power);		// Fill power[] with the periodogram
 
-		hOutput = fopen("test.pgram.txt", "w");
+		shared_ptr<FILE> hOutput(fopen("test.pgram.txt", "w"), &fclose);
 		for(size_t i = 0; i < freq.size(); i++) {
-			fprintf(hOutput, "%.4f, %.4f\n", freq[i], power[i]);
+			fprintf(hOutput.get(), "%.4f, %.4f\n", freq[i], power[i]);
 		}
-		fclose(hOutput);
-	} catch (std::logic_error e) {
-		fprintf(stderr, "Periodogram generation failed: %60s\n", e.what());
+	} catch (const std::exception& e) {
+		fprintf(stderr, "Periodogram generation failed: %s\n", e.what());
 	}
 	
 	//--------------------------------------------------
@@ -87,23 +92,25 @@ int main()
 			}
 		}
 		
-		autoCorr(t, x, offHalf, acf);
+		{
+			autoCorr(t, x, offHalf, acf);
 
-		hOutput = fopen("test.acf2.txt", "w");
-		for(size_t i = 0; i < acf.size(); i++) {
-			fprintf(hOutput, "%.4f, %.4f\n", offHalf[i], acf[i]);
+			shared_ptr<FILE> hOutput(fopen("test.acf2.txt", "w"), &fclose);
+			for(size_t i = 0; i < acf.size(); i++) {
+				fprintf(hOutput.get(), "%.4f, %.4f\n", offHalf[i], acf[i]);
+			}
 		}
-		fclose(hOutput);
 
-		autoCorr(t, x, off, acf);
-
-		hOutput = fopen("test.acf.txt", "w");
-		for(size_t i = 0; i < acf.size(); i++) {
-			fprintf(hOutput, "%.4f, %.4f\n", off[i], acf[i]);
+		{
+			autoCorr(t, x, off, acf);
+	
+			shared_ptr<FILE> hOutput(fopen("test.acf.txt", "w"), &fclose);
+			for(size_t i = 0; i < acf.size(); i++) {
+				fprintf(hOutput.get(), "%.4f, %.4f\n", off[i], acf[i]);
+			}
 		}
-		fclose(hOutput);
-	} catch (std::logic_error e) {
-		fprintf(stderr, "Autocorrelation generation failed: %60s\n", e.what());
+	} catch (const std::exception& e) {
+		fprintf(stderr, "Autocorrelation generation failed: %s\n", e.what());
 	}
 	
 	//--------------------------------------------------
@@ -120,19 +127,21 @@ int main()
 		autoCorr(t, x, off, acf);
 		acWindow(t, off, wf);
 
-		hOutput = fopen("test.win.txt", "w");
-		for(size_t i = 0; i < wf.size(); i++) {
-			fprintf(hOutput, "%.4f, %.4f\n", off[i], wf[i]);
+		{
+			shared_ptr<FILE> hOutput(fopen("test.win.txt", "w"), &fclose);
+			for(size_t i = 0; i < wf.size(); i++) {
+				fprintf(hOutput.get(), "%.4f, %.4f\n", off[i], wf[i]);
+			}
 		}
-		fclose(hOutput);
 		
-		hOutput = fopen("test.unwinacf.txt", "w");
-		for(size_t i = 0; i < off.size(); i++) {
-			fprintf(hOutput, "%.4f, %.4f\n", off[i], acf[i]*wf[i]);
+		{
+			shared_ptr<FILE> hOutput(fopen("test.unwinacf.txt", "w"), &fclose);
+			for(size_t i = 0; i < off.size(); i++) {
+				fprintf(hOutput.get(), "%.4f, %.4f\n", off[i], acf[i]*wf[i]);
+			}
 		}
-		fclose(hOutput);
-	} catch (std::logic_error e) {
-		fprintf(stderr, "Autocorrelation generation failed: %60s\n", e.what());
+	} catch (const std::exception& e) {
+		fprintf(stderr, "ACF window function generation failed: %s\n", e.what());
 	}
 	
 	return 0;

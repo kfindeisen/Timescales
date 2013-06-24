@@ -14,10 +14,8 @@ LIBDIRS  :=
 # Compiler settings
 CXX       := g++
 
-#LANGTYPE  := -std=c++98 -pedantic-errors
-LANGTYPE  := -std=c++98
-#WARNINGS  := -Wall -Wextra -Weffc++ -Wdeprecated -Wold-style-cast -Wsign-promo -fdiagnostics-show-option
-WARNINGS  := -Wall -Wextra -Wdeprecated -Wsign-promo -fdiagnostics-show-option
+LANGTYPE  := -std=c++98 -pedantic-errors
+WARNINGS  := -Wall -Wextra -Weffc++ -Wdeprecated -Wold-style-cast -Wsign-promo -fdiagnostics-show-option
 OPTFLAGS  := -O3 -DNDEBUG
 CXXFLAGS  := $(LANGTYPE) $(WARNINGS) $(OPTFLAGS) -Werror -D BOOST_TEST_DYN_LINK
 LDFLAGS   := 

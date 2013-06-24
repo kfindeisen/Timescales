@@ -1,47 +1,52 @@
 /** Computes delta-T pair plots, including self-correlation functions and gap plots
- * @file pairwise.cpp
+ * @file timescales/pairwise.cpp
  * @author Krzysztof Findeisen
  * @date Created July 24, 2011
- * @date Last modified July 24, 2011
+ * @date Last modified June 20, 2013
  */ 
 
 #include <algorithm>
+#include <string>
 #include <vector>
 #include <utility>
 #include <cmath>
+#include <boost/lexical_cast.hpp>
+#include <boost/math/constants/constants.hpp>
 #include "timescales.h"
 
-#if USELFP
-#include <lfp/lfp.h>
-#endif
+namespace kpftimes {
 
-#ifndef PI
-#define PI 3.1415927
-#endif
+using std::string;
+using boost::lexical_cast;
+using boost::math::double_constants::two_pi;
 
-using namespace std;
-
-/** Calculates all Delta-m Delta-T pairs. deltaT is returned sorted in 
- *	ascending order. Pairs of observations with the same time separation may be returned 
- *	in any order.
+/** Calculates a &Delta;m&Delta;t plot.
  * 
- * @param[in] times	Times at which data were taken
- * @param[in] fluxes	Flux measurements of a source
+ * @param[in] times	Times at which @p mags were taken
+ * @param[in] mags	Magnitude measurements of a source
  * @param[out] deltaT	A list of the time intervals between all pairs of sources.
- * @param[out] deltaM	A list of the magnitude difference between each pair in deltaT.
+ * @param[out] deltaM	A list of the magnitude difference between each pair in @p deltaT.
  *
- * @pre times contains at least two unique values
- * @pre times is sorted in ascending order
- * @pre fluxes is of the same length as times
- * @pre fluxes[i] is the flux of the source at times[i], for all i
- * @post if N == length(times), length(deltaT) == length(deltaM) == N(N-1)/2
- * @exception invalid_argument Thrown if the preconditions on times or 
- *	length(fluxes) are violated.
+ * @pre @p times contains at least two unique values
+ * @pre @p times is sorted in ascending order
+ * @pre @p mags.size() = @p times.size()
+ * @pre @p mags[i] is the magnitude of the source at @p times[i], for all i
  *
- * @perform O(times.size()^2) time
+ * @post @p deltaT.size() = @p deltaM.size() = N(N-1)/2, where N = @p times.size()
+ * @post @p deltaT is sorted in ascending order
+ * @post Each element of @p deltaT represents the absolute time separation of 
+ * 	a unique pair of values in @p times, and each element of @p deltaM 
+ *	represents the absolute magnitude separation of a corresponding pair 
+ *	of values in @p mags
+ * 
+ * @perform O(N<sup>2</sup>) time, where N = times.size()
  *
+ * @exception std::invalid_argument Thrown if the preconditions on 
+ *	@p times or @p mags.size() are violated.
+ * @exception std::bad_alloc Thrown if there is not enough memory to compute 
+ *	the &Delta;m&Delta;t plot
  */
-void kpftimes::dmdt(const DoubleVec &times, const DoubleVec &fluxes, 
+void dmdt(const DoubleVec &times, const DoubleVec &mags, 
 		DoubleVec &deltaT, DoubleVec &deltaM) {
 	size_t nTimes  = times.size();
 	
@@ -58,41 +63,47 @@ void kpftimes::dmdt(const DoubleVec &times, const DoubleVec &fluxes,
 	
 	// Verify the preconditions
 	if (!diffValues) {
-		throw invalid_argument("times contains only one unique date");
+		throw std::invalid_argument("Parameter 'times' in lombScargle() contains only one unique date");
 	} else if (!sortedTimes) {
-		throw invalid_argument("times is not sorted in ascending order");
-	} else if (fluxes.size() != nTimes) {
-		throw invalid_argument("times and fluxes are not the same length");
+		throw std::invalid_argument("Parameter 'times' in lombScargle() is not sorted in ascending order");
+	} else if (mags.size() != nTimes) {
+		try {
+			throw std::invalid_argument("Parameters 'times' and 'mags' in lombScargle() are not the same length (gave " 
+			+ lexical_cast<string>(nTimes) + " for times and " 
+			+ lexical_cast<string>(mags.size()) + " for mags)");
+		} catch (const boost::bad_lexical_cast& e) {
+			throw std::invalid_argument("Parameters 'times' and 'mags' in lombScargle() are not the same length");
+		}
 	}
 
-	// Start making the output
-	deltaT.clear();
-	deltaT.reserve(nTimes*(nTimes-1)/2);
-	deltaM.clear();
-	deltaM.reserve(nTimes*(nTimes-1)/2);
-	
 	// Needed for sorting by deltaT
-	vector<pair<double, double> > sortableVec;
+	typedef std::vector<std::pair<double, double> > pairVec;
+	pairVec sortableVec;
 	
 	for(size_t i = 0; i < nTimes; i++) {
 		for(size_t j = i+1; j < nTimes; j++) {
-//			deltaT.push_back(abs(times[i]-times[j]));
-//			deltaM.push_back(abs(fluxes[i]-fluxes[j]));
-
 			// Time must be first element so that the pairs get sorted properly
-			sortableVec.push_back(pair<double, double>(abs(times[i]-times[j]), 
-					abs(fluxes[i]-fluxes[j]) ));
+			sortableVec.push_back(std::make_pair(fabs(times[i]-times[j]), 
+					fabs(mags[i]-mags[j]) ));
 		}
 	}
 	
 	// Now we just need to sort it
 	// I don't have a parallel sort function yet
 	// For now, do it the clumsy way, using pair<>
-	sort(sortableVec.begin(), sortableVec.end());
+	std::sort(sortableVec.begin(), sortableVec.end());
 	
-	for(vector<pair<double, double> >::const_iterator it = sortableVec.begin(); 
-			it != sortableVec.end(); it++) {
-		deltaT.push_back(it->first);
-		deltaM.push_back(it->second);
+	// copy-and-swap
+	DoubleVec tempTimes, tempMags;
+	
+	for(pairVec::const_iterator it = sortableVec.begin(); it != sortableVec.end(); it++) {
+		tempTimes.push_back(it->first );
+		tempMags .push_back(it->second);
 	}
+	
+	using std::swap;
+	swap(deltaT, tempTimes);
+	swap(deltaM, tempMags );
 }
+
+}		// end kpftimes

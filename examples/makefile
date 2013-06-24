@@ -1,7 +1,7 @@
 # Compilation make for timescales demo
 # by Krzysztof Findeisen
 # Created June 14, 2013
-# Last modified June 14, 2013
+# Last modified June 21, 2013
 
 include ../makefile.inc
 
@@ -10,7 +10,7 @@ include ../makefile.inc
 PROJ    := example
 SOURCES := example.cpp
 OBJS    := $(SOURCES:.cpp=.o)
-LIBS    := timescales gsl gslcblas
+LIBS    := timescales gsl
 
 #---------------------------------------
 # Primary build option

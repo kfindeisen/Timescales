@@ -10,7 +10,7 @@ include ../makefile.inc
 PROJ    := test
 SOURCES := driver.cpp unit_lsNormalEdf.cpp unit_FastTable.cpp
 OBJS    := $(SOURCES:.cpp=.o)
-LIBS    := timescales kpfutils gsl gslcblas boost_unit_test_framework-mt 
+LIBS    := timescales kpfutils gsl boost_unit_test_framework-mt 
 
 #---------------------------------------
 # Primary build option

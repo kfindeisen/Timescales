@@ -5,7 +5,7 @@
  * @date Last modified June 17, 2013
  */
 
-#include "../warnflags.h"
+#include "../../common/warnflags.h"
 
 // Boost.Test uses C-style casts and non-virtual destructors
 #ifdef GNUC_COARSEWARN

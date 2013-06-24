@@ -1,29 +1,23 @@
 /** Implements the irregularly-sampled discrete Fourier transform
- * @file dft.cpp
+ * @file timescales/dft.cpp
  * @author Krzysztof Findeisen
  * @date Created February 13, 2011
- * @date Last modified April 14, 2011
+ * @date Last modified June 19, 2013
  */ 
 
+#include <algorithm>
 #include <complex>
 #include <stdexcept>
+#include <string>
 #include <vector>
+#include <boost/lexical_cast.hpp>
+#include <boost/math/constants/constants.hpp>
 #include "dft.h"
 
-/* Implementation note: this code extensively uses std::vectors in its 
- *	function arguments to avoid complex memory allocation problems for the 
- *	client and in the function bodies to benefit from the extra 
- *	functionality of array objects compared to C-style arrays
- * The absolute fastest way to fill a vector of known size is to declare it 
- *	without initializing the array, reserve() an array of the right size, 
- *	then use push_back() to fill the array in order. However, this 
- *	approach is vulnerable to counting errors, since the mechanism for 
- *	filling the array never refers to the known array size.
- * A slightly slower but much more maintainable approach is to initialize the 
- *	array to a fixed size, then use the [] operator to set each array 
- *	element correctly. This is the approach taken here.
- */
+namespace kpftimes {
 
+using std::string;
+using boost::lexical_cast;
 
 /** Calculates the discrete Fourier transform for a list of times and fluxes
  * 
@@ -34,30 +28,36 @@
  *			generate a grid.
  * @param[out] dft	Fourier transform at each frequency.
  *
- * @pre times contains at least two unique values
- * @pre times is sorted in ascending order
- * @pre fluxes is of the same length as times
- * @pre fluxes[i] is the flux of the source at times[i], for all i
- * @pre all elements of freq are >= 0
- * @post dft is of the same length as freq
- * @post dft[i] is the discrete Fourier transform evaluated at freq[i], for all i
- * @exception domain_error Thrown if negative frequencies are provided
- * @exception invalid_argument Thrown if any of the preconditions on the 
- *	format of times or fluxes are violated.
+ * @pre @p times contains at least two unique values
+ * @pre @p times is sorted in ascending order
+ * @pre @p fluxes.size() = @p times.size()
+ * @pre @p fluxes[i] is the flux of the source at @p times[i], for all i
+ * @pre all elements of @p freq[i] &gt; 0 for all i
+ * 
+ * @post @p dft.size() = @p freq.size()
+ * @post @p dft[i] is the discrete Fourier transform evaluated at @p freq[i], for all i
  *
- * @perform O(times.size() × freqs.size()) time
+ * @perform O(NF) time, where N = @p times.size() and F = freqs.size()
  *
- * @todo Find a faster implementation of dft.
+ * @exception std::domain_error Thrown if negative frequencies are provided 
+ *	in @p freq
+ * @exception std::invalid_argument Thrown if any of the preconditions on the 
+ *	format of @p times or @p fluxes are violated.
+ * 
+ * @exceptsafe The function arguments are unchanged in the event of an exception.
+ *
+ * @todo Find a faster implementation.
  * @todo Verify that input validation is worth the cost
  */
-void kpftimes::dft(const DoubleVec &times, const DoubleVec &fluxes, 
+void dft(const DoubleVec &times, const DoubleVec &fluxes, 
 		const DoubleVec &freqs, ComplexVec &dft) {
 	/* This is a brute-force implementation, with no attempt at efficiency
 	 * This will later become the reference implementation when I try to 
 	 *	replace this with something more subtle
 	 */
-	const static std::complex<double> I(0, 1);
-	const static double PI = 3.1415927;
+
+	using boost::math::double_constants::two_pi;
+	const static std::complex<double> I(0.0, 1.0);
 	
 	size_t nTimes = times.size();
 	size_t nFreqs = freqs.size();
@@ -75,22 +75,33 @@ void kpftimes::dft(const DoubleVec &times, const DoubleVec &fluxes,
 
 	// Verify the preconditions
 	if (!diffValues) {
-		throw std::invalid_argument("times contains only one unique date");
+		throw std::invalid_argument("Argument 'times' to dft() contains only one unique date");
 	} else if (!sortedTimes) {
-		throw std::invalid_argument("times is not sorted in ascending order");
+		throw std::invalid_argument("Argument 'times' to dft() is not sorted in ascending order");
 	} else if (fluxes.size() != nTimes) {
-		throw std::invalid_argument("times and fluxes are not the same length");
+		try {
+			throw std::invalid_argument("Arguments 'times' and 'fluxes' to dft() are not the same length (gave " 
+			+ lexical_cast<string>(nTimes) + " for times and " 
+			+ lexical_cast<string>(fluxes.size()) + " for fluxes)");
+		} catch (const boost::bad_lexical_cast& e) {
+			throw std::invalid_argument("Arguments 'times' and 'fluxes' to dft() are not the same length");
+		}
 	}
 
-	// Start working
-	dft.clear();
-	dft.resize(nFreqs);
+	// copy-and-swap
+	ComplexVec tempDft(nFreqs, 0.0);
 
 	for(size_t i = 0; i < nFreqs; i++) {
-		double omega = 2.0 * PI * freqs[i];
-		dft[i] = 0.0;
+		double omega = two_pi * freqs[i];
 		for(size_t j = 0; j < nTimes; j++) {
 			dft[i] += fluxes[j] * exp(-I * omega * times[j]);
 		}
 	}
+	
+	// IMPORTANT: no exceptions beyond this point
+	
+	using std::swap;
+	swap(dft, tempDft);
 }
+
+}		// end kpftimes

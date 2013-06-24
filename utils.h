@@ -1,5 +1,6 @@
-/** Support code for the library. None of these routines are intended as part of the public API.
- * @file utils.h
+/** Support code for the library. None of these routines are 
+ * intended as part of the public API.
+ * @file timescales/utils.h
  * @author Krzysztof Findeisen
  * @date Created April 13, 2011
  * @date Last modified June 17, 2013
@@ -31,9 +32,18 @@ public:
 	FastTable(const FastTable& otherTable);
 	FastTable& operator=(const FastTable& otherTable);
 	~FastTable();
+
 	/** Access function to allow reads and writes of a table element.
 	 */
 	double& at(size_t x, size_t y);
+	
+	/** Returns the X (outer) dimension of the FastTable
+	 */
+	size_t getX();
+
+	/** Returns the Y (inner) dimension of the FastTable
+	 */
+	size_t getY();
 private:
 	double *table;
 	const size_t dimX, dimY;

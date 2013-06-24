@@ -2,10 +2,10 @@
  * @file timescales/tests/unit_lsNormalEdf.cpp
  * @author Krzysztof Findeisen
  * @date Created May 19, 2011
- * @date Last modified June 17, 2013
+ * @date Last modified June 21, 2013
  */
 
-#include "../warnflags.h"
+#include "../../common/warnflags.h"
 
 // Boost.Test uses C-style casts and non-virtual destructors
 #ifdef GNUC_COARSEWARN
@@ -34,6 +34,7 @@
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>
 #include "../../common/alloc.tmp.h"
+#include "../../common/cerror.h"
 #include "../../common/stats.tmp.h"
 #include "../timescales.h"
 
@@ -146,7 +147,7 @@ public:
  *
  * @exceptsafe Program is in a valid state in the event of an exception.
  *
- * @todo Update exception spec after deciding on a spec for lsNormalEdf().
+ * @internal @note Program opens and writes to files, preventing a stronger guarantee
  */
 void testEdf(const DoubleVec& times, const DoubleVec& freqs, size_t nSims) {
 	const static size_t numRealRuns = 1000;
@@ -201,11 +202,17 @@ void testEdf(const DoubleVec& times, const DoubleVec& freqs, size_t nSims) {
 		
 		std::sort(highestPeak.begin(), highestPeak.end());
 		for(size_t i = 0; i < highestPeak.size(); i++) {
-			fprintf(trueEdf.get(), "%.3f %.3f\n", highestPeak[i], 
-				static_cast<double>(i+1) / highestPeak.size());
+			if (fprintf(trueEdf.get(), "%.3f %.3f\n", highestPeak[i], 
+					static_cast<double>(i+1) / highestPeak.size()) < 0) {
+				kpfutils::fileError(trueEdf.get(), 
+					"Could not write to trueedf.txt: ");
+			}
 		}
 		for(size_t i = 0; i < powers.size(); i++) {
-			fprintf(ourEdf.get(), "%.3f %.3f\n", powers[i], probs[i]);
+			if (fprintf(ourEdf.get(), "%.3f %.3f\n", powers[i], probs[i]) < 0) {
+				kpfutils::fileError(ourEdf.get(), 
+					"Could not write to ouredf.txt: ");
+			}
 		}
 	}
 }
