@@ -2,7 +2,7 @@
  * @file timescales/dft.cpp
  * @author Krzysztof Findeisen
  * @date Created February 13, 2011
- * @date Last modified June 19, 2013
+ * @date Last modified November 18, 2013
  */ 
 
 #include <algorithm>
@@ -13,6 +13,8 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/math/constants/constants.hpp>
 #include "dft.h"
+#include "../common/stats_except.h"
+#include "timeexcept.h"
 
 namespace kpftimes {
 
@@ -32,17 +34,21 @@ using boost::lexical_cast;
  * @pre @p times is sorted in ascending order
  * @pre @p fluxes.size() = @p times.size()
  * @pre @p fluxes[i] is the flux of the source at @p times[i], for all i
- * @pre all elements of @p freq[i] &gt; 0 for all i
+ * @pre all elements of @p freqs[i] &gt; 0 for all i
  * 
- * @post @p dft.size() = @p freq.size()
- * @post @p dft[i] is the discrete Fourier transform evaluated at @p freq[i], for all i
+ * @post @p dft.size() = @p freqs.size()
+ * @post @p dft[i] is the discrete Fourier transform evaluated at @p freqs[i], for all i
  *
  * @perform O(NF) time, where N = @p times.size() and F = freqs.size()
  *
- * @exception std::domain_error Thrown if negative frequencies are provided 
- *	in @p freq
- * @exception std::invalid_argument Thrown if any of the preconditions on the 
- *	format of @p times or @p fluxes are violated.
+ * @exception kpftimes::except::BadLightCurve Thrown if @p times has at most 
+ *	one distinct value.
+ * @exception kpfutils::except::NotSorted Thrown if @p times is not in 
+ *	ascending order.
+ * @exception kpftimes::except::NegativeFreq Thrown if some elements of @p freqs are 
+ *	negative.
+ * @exception std::invalid_argument Thrown if @p times and @p fluxes have 
+ *	different lengths.
  * 
  * @exceptsafe The function arguments are unchanged in the event of an exception.
  *
@@ -75,9 +81,9 @@ void dft(const DoubleVec &times, const DoubleVec &fluxes,
 
 	// Verify the preconditions
 	if (!diffValues) {
-		throw std::invalid_argument("Argument 'times' to dft() contains only one unique date");
+		throw except::BadLightCurve("Argument 'times' to dft() contains only one unique date");
 	} else if (!sortedTimes) {
-		throw std::invalid_argument("Argument 'times' to dft() is not sorted in ascending order");
+		throw kpfutils::except::NotSorted("Argument 'times' to dft() is not sorted in ascending order");
 	} else if (fluxes.size() != nTimes) {
 		try {
 			throw std::invalid_argument("Arguments 'times' and 'fluxes' to dft() are not the same length (gave " 

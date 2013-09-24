@@ -2,7 +2,7 @@
  * @file timescales/tests/unit_lsNormalEdf.cpp
  * @author Krzysztof Findeisen
  * @date Created May 19, 2011
- * @date Last modified June 21, 2013
+ * @date Last modified November 19, 2013
  */
 
 #include "../../common/warnflags.h"
@@ -57,7 +57,7 @@ public:
 	 * @exceptsafe Object construction is atomic.
 	 */
 	EdfData(): times1(), times2sort(), times2unsort(), times2dupe(), 
-			times100randsort(), times100rand2sort(), times100unifsort(), 
+			times100randsort(), times100randunsort(), times100rand2sort(), times100unifsort(), 
 			posFreq(), zero2Freq(), negFreq() {
 	
 		// Define time grids
@@ -99,6 +99,9 @@ public:
 		for(double i = 0.01; i < 0.1; i+=0.01) {
 			negFreq.push_back(-i);			// Who says negFreq needs to be sorted?
 		}
+	}
+	
+	virtual ~EdfData() {
 	}
 	
 	/** Grid with a single time
@@ -145,6 +148,9 @@ public:
  * @param[in] freqs The frequency array to be passed to lsNormalEdf().
  * @param[in] nSims The number of simulations to request of lsNormalEdf().
  *
+ * @exception std::bad_alloc Thrown if there is not enough memory to run the test.
+ * @exception std::exception Thrown if incorrect arguments are passed to lsNormalEdf()
+ *
  * @exceptsafe Program is in a valid state in the event of an exception.
  *
  * @internal @note Program opens and writes to files, preventing a stronger guarantee
@@ -153,12 +159,12 @@ void testEdf(const DoubleVec& times, const DoubleVec& freqs, size_t nSims) {
 	const static size_t numRealRuns = 1000;
 
 	DoubleVec powers, probs;
+	// Do not wrap exceptions here -- let them be tested by the caller
 	lsNormalEdf(times, freqs, powers, probs, nSims);
-
-	// Verify this AFTER calling lsNormalEdf(), to test 
-	//	whether lsNormalEdf() throws
-	BOOST_REQUIRE_GT(nSims, 0);
 	
+	// Make sure that, if lsNormalEdf did not throw, then the data is valid
+	BOOST_REQUIRE(nSims > 0);
+
 	BOOST_REQUIRE_EQUAL(powers.size(), nSims);
 	BOOST_REQUIRE_EQUAL(probs .size(), nSims);
 	
@@ -168,10 +174,7 @@ void testEdf(const DoubleVec& times, const DoubleVec& freqs, size_t nSims) {
 	
 	// powers matches output of lombScargle... at least, in a 
 	//	statistical sense
-	shared_ptr<gsl_rng> calGen(gsl_rng_alloc(gsl_rng_mt19937), &gsl_rng_free);
-	if (calGen.get() == NULL) {
-		throw std::bad_alloc();
-	}
+	shared_ptr<gsl_rng> calGen(checkAlloc(gsl_rng_alloc(gsl_rng_mt19937)), &gsl_rng_free);
 	gsl_rng_set(calGen.get(), 101);
 	
 	DoubleVec highestPeak, randomFluxes, truePower;
@@ -183,7 +186,7 @@ void testEdf(const DoubleVec& times, const DoubleVec& freqs, size_t nSims) {
 			randomFluxes.push_back(gsl_ran_gaussian(calGen.get(), 1.0));
 		}
 
-		lombScargle(times, randomFluxes, freqs, truePower);
+		BOOST_REQUIRE_NO_THROW(lombScargle(times, randomFluxes, freqs, truePower) );
 
 		highestPeak.push_back(*std::max_element(truePower.begin(), 
 				truePower.end()));
@@ -253,9 +256,9 @@ BOOST_AUTO_TEST_CASE(normal) {
 	// Invalid input
 
 	/* @test A 100-element nonuniformly sampled time series, sorted with no 
-	 *	duplicates, and nSims = 0. Expected behavior = throw domain_error.
+	 *	duplicates, and nSims = 0. Expected behavior = throw invalid_argument.
 	 */
-	BOOST_CHECK_THROW(testEdf(times100randsort, posFreq, 0), std::domain_error);
+	BOOST_CHECK_THROW(testEdf(times100randsort, posFreq, 0), std::invalid_argument);
 	/* @test A 100-element nonuniformly sampled time series, sorted with no 
 	 *	duplicates, and nSims = 100. Expected behavior = matches result of 
 	 *	running lombScargle 1000 times.
@@ -271,9 +274,9 @@ BOOST_AUTO_TEST_CASE(normal) {
 	// Frequency grid testing
 
 	/* @test A 100-element nonuniformly sampled time series, sorted with no 
-	 *	duplicates, and negative frequencies. Expected behavior = throw domain_error.
+	 *	duplicates, and negative frequencies. Expected behavior = throw invalid_argument.
 	 */
-	BOOST_CHECK_THROW(testEdf(times100randsort, negFreq, 1000), std::domain_error);
+	BOOST_CHECK_THROW(testEdf(times100randsort, negFreq, 1000), std::invalid_argument);
 	/* @test A 100-element nonuniformly sampled time series, sorted with no 
 	 *	duplicates, and multiple zero frequencies. Expected behavior = matches 
 	 *	result of running lombScargle 1000 times.

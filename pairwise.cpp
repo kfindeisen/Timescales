@@ -2,7 +2,7 @@
  * @file timescales/pairwise.cpp
  * @author Krzysztof Findeisen
  * @date Created July 24, 2011
- * @date Last modified June 20, 2013
+ * @date Last modified September 19, 2013
  */ 
 
 #include <algorithm>
@@ -12,6 +12,8 @@
 #include <cmath>
 #include <boost/lexical_cast.hpp>
 #include <boost/math/constants/constants.hpp>
+#include "../common/stats_except.h"
+#include "timeexcept.h"
 #include "timescales.h"
 
 namespace kpftimes {
@@ -41,10 +43,16 @@ using boost::math::double_constants::two_pi;
  * 
  * @perform O(N<sup>2</sup>) time, where N = times.size()
  *
- * @exception std::invalid_argument Thrown if the preconditions on 
- *	@p times or @p mags.size() are violated.
+ * @exception kpftimes::except::BadLightCurve Thrown if @p times has at most 
+ *	one distinct value.
+ * @exception kpfutils::except::NotSorted Thrown if @p times is not in 
+ *	ascending order.
+ * @exception std::invalid_argument Thrown if @p times and @p mags have 
+ *	different lengths.
  * @exception std::bad_alloc Thrown if there is not enough memory to compute 
  *	the &Delta;m&Delta;t plot
+ * 
+ * @exceptsafe The function arguments are unchanged in the event of an exception.
  */
 void dmdt(const DoubleVec &times, const DoubleVec &mags, 
 		DoubleVec &deltaT, DoubleVec &deltaM) {
@@ -63,16 +71,16 @@ void dmdt(const DoubleVec &times, const DoubleVec &mags,
 	
 	// Verify the preconditions
 	if (!diffValues) {
-		throw std::invalid_argument("Parameter 'times' in lombScargle() contains only one unique date");
+		throw except::BadLightCurve("Parameter 'times' in dmdt() contains only one unique date");
 	} else if (!sortedTimes) {
-		throw std::invalid_argument("Parameter 'times' in lombScargle() is not sorted in ascending order");
+		throw kpfutils::except::NotSorted("Parameter 'times' in dmdt() is not sorted in ascending order");
 	} else if (mags.size() != nTimes) {
 		try {
-			throw std::invalid_argument("Parameters 'times' and 'mags' in lombScargle() are not the same length (gave " 
+			throw std::invalid_argument("Parameters 'times' and 'mags' in dmdt() are not the same length (gave " 
 			+ lexical_cast<string>(nTimes) + " for times and " 
 			+ lexical_cast<string>(mags.size()) + " for mags)");
 		} catch (const boost::bad_lexical_cast& e) {
-			throw std::invalid_argument("Parameters 'times' and 'mags' in lombScargle() are not the same length");
+			throw std::invalid_argument("Parameters 'times' and 'mags' in dmdt() are not the same length");
 		}
 	}
 

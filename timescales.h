@@ -90,9 +90,11 @@
  * @page use User's Guide
  * 
  * @page changelog Version History
+ *
+ * @brief <b></b>
  * 
  * Timescales conforms to 
- * <a href="http://semver.org/spec/v2.0.0-rc.1.html">version 2.0.0-rc.1 of the Semantic Versioning specification</a>. 
+ * <a href="http://semver.org/spec/v2.0.0.html">version 2.0.0 of the Semantic Versioning specification</a>. 
  * All version numbers are to be interpreted as described therein. 
  * This documentation constitutes the public API for the library.
  *
@@ -101,7 +103,7 @@
  * @subsection v0_4_0_diff Changes 
  * 
  * - From now on, version numbers will conform to 
- *	<a href="http://semver.org/spec/v2.0.0-rc.1.html">version 2.0.0-rc.1 of the Semantic Versioning specification</a>.
+ *	<a href="http://semver.org/spec/v2.0.0.html">version 2.0.0 of the Semantic Versioning specification</a>.
  * - Removed statistics routines from utils.h to common/stats.tmp.h
  * - Improved quality of documentation
  * - Improved quality of source code. All functions are now exception-safe.

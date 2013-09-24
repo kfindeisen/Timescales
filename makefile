@@ -1,7 +1,7 @@
 # Compilation make for timescales.lib / libtimescales.a
 # by Krzysztof Findeisen
 # Created March 18, 2010
-# Last modified June 14, 2013
+# Last modified November 18, 2013
 
 include makefile.inc
 
@@ -16,11 +16,9 @@ ALGTYPE  :=
 # Select all files
 PROJ        := timescales
 PROJ        := lib$(PROJ).a
-SOURCES     := autocorr.cpp dft.cpp freqgen.cpp pairwise.cpp scargle.cpp specialfreqs.cpp utils.cpp
+SOURCES     := autocorr.cpp dft.cpp freqgen.cpp pairwise.cpp scargle.cpp specialfreqs.cpp utils.cpp \
+	baddata.cpp badoption.cpp
 OBJS        :=     $(SOURCES:.cpp=.o)
-# except must be last because other libraries depend on it
-#DIRS     := cmd samples stats waves except 
-#TESTLIBS := gsl gslcblas boost_unit_test_framework-mt 
 
 #---------------------------------------
 # Primary build option

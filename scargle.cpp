@@ -2,7 +2,7 @@
  * @file timescales/scargle.cpp
  * @author Krzysztof Findeisen
  * @date Derived from scargle.pro (by Joern Wilms et al.) January 25, 2010
- * @date Last modified June 20, 2013
+ * @date Last modified November 19, 2013
  */ 
 
 #include <algorithm>
@@ -19,6 +19,7 @@
 #include "utils.h"
 #include "../common/alloc.tmp.h"
 #include "../common/stats.tmp.h"
+#include "timeexcept.h"
 
 namespace kpftimes {
 
@@ -50,9 +51,14 @@ using kpfutils::checkAlloc;
  * @perform O(NF) time, where N = @p times.size() and F = @p freqs.size()
  * @perfmore O(N + F) memory
  * 
- * @exception std::domain_error Thrown if negative frequencies are provided in @p freqs
- * @exception std::invalid_argument Thrown if any of the preconditions on the 
- *	format of @p times or @p data are violated.
+ * @exception kpftimes::except::BadLightCurve Thrown if @p times or @p data has 
+ *	at most one distinct value.
+ * @exception kpfutils::except::NotSorted Thrown if @p times is not in 
+ *	ascending order.
+ * @exception kpftimes::except::NegativeFreq Thrown if some elements of @p freqs are 
+ *	negative.
+ * @exception std::invalid_argument Thrown if @p times and @p data have 
+ *	different lengths.
  * @exception std::bad_alloc Thrown if there is not enough memory to do the 
  *	calculations.
  *
@@ -88,9 +94,9 @@ void lombScargle(const DoubleVec &times, const DoubleVec &data,
 
 	// Verify the preconditions
 	if (!diffValues) {
-		throw std::invalid_argument("Parameter 'times' in lombScargle() contains only one unique date");
+		throw except::BadLightCurve("Parameter 'times' in lombScargle() contains only one unique date");
 	} else if (!sortedTimes) {
-		throw std::invalid_argument("Parameter 'times' in lombScargle() is not sorted in ascending order");
+		throw kpfutils::except::NotSorted("Parameter 'times' in lombScargle() is not sorted in ascending order");
 	} else if (data.size() != nTimes) {
 		try {
 			throw std::invalid_argument("Parameters 'times' and 'data' in lombScargle() are not the same length (gave " 
@@ -104,7 +110,7 @@ void lombScargle(const DoubleVec &times, const DoubleVec &data,
 	// Full sample variance
 	double var   = kpfutils::variance(data.begin(), data.end());
 	if (var <= 0.0) {
-		throw std::invalid_argument("Parameter 'data' in lombScargle() has no variability");
+		throw except::BadLightCurve("Parameter 'data' in lombScargle() has no variability");
 	}
 
 	size_t nFreq  = freqs.size();
@@ -112,7 +118,7 @@ void lombScargle(const DoubleVec &times, const DoubleVec &data,
 	DoubleVec om(nFreq);
 	for(i = 0; i < nFreq; i++) {
 		if(freqs[i] < 0) {
-			throw std::domain_error("Parameter 'freqs' in lombScargle() contains negative frequencies");
+			throw except::NegativeFreq("Parameter 'freqs' in lombScargle() contains negative frequencies");
 		} else {
 			om[i] = two_pi*freqs[i];
 		}
@@ -237,10 +243,14 @@ void lombScargle(const DoubleVec &times, const DoubleVec &data,
  * @perform O(NF × @p nSims) time, where N = @p times.size() and F = @p freqs.size()
  * @perfmore O(NF) memory
  * 
- * @exception std::domain_error Thrown if @p fap, @p nSims, or any element 
- *	of @p freqs is negative.
- * @exception std::invalid_argument Thrown if any of the preconditions on the 
- *	format of @p times or the values of @p fap and @p nSims are violated.
+ * @exception kpftimes::except::BadLightCurve Thrown if @p times has 
+ *	at most one distinct value.
+ * @exception kpfutils::except::NotSorted Thrown if @p times is not in 
+ *	ascending order.
+ * @exception kpftimes::except::NegativeFreq Thrown if some elements of @p freqs are 
+ *	negative.
+ * @exception std::invalid_argument Thrown if @p fap is outside (0, 1) or 
+ *	if @p nSims is nonpositive
  * @exception std::bad_alloc Thrown if there is not enough memory to do the 
  *	calculations.
  * 
@@ -273,9 +283,9 @@ double lsThreshold(const DoubleVec &times, const DoubleVec &freqs,
 
 	// Verify the preconditions
 	if (!diffValues) {
-		throw std::invalid_argument("Parameter 'times' in lsThreshold() contains only one unique date");
+		throw except::BadLightCurve("Parameter 'times' in lsThreshold() contains only one unique date");
 	} else if (!sortedTimes) {
-		throw std::invalid_argument("Parameter 'times' in lsThreshold() is not sorted in ascending order");
+		throw kpfutils::except::NotSorted("Parameter 'times' in lsThreshold() is not sorted in ascending order");
 	} else if (nSims < 1) {
 		try {
 			throw std::invalid_argument("Must run at least one simulation in lsThreshold() (gave " + lexical_cast<string>(nSims) + ")");
@@ -297,7 +307,7 @@ double lsThreshold(const DoubleVec &times, const DoubleVec &freqs,
 	DoubleVec om(nFreq);
 	for(i = 0; i < nFreq; i++) {
 		if(freqs[i] < 0) {
-			throw std::domain_error("Parameter 'freqs' in lsThreshold() contains negative frequencies");
+			throw except::NegativeFreq("Parameter 'freqs' in lsThreshold() contains negative frequencies");
 		} else {
 			om[i] = two_pi*freqs[i];
 		}
@@ -420,8 +430,6 @@ double lsThreshold(const DoubleVec &times, const DoubleVec &freqs,
 	// False Alarm Probability according to simulations
 	// We have all the peaks, now find the fapth percentile
 	// That's the level we expect to be exceeded one fapth of the time
-//	sort(psdPeak.begin(), psdPeak.end());
-//	return psdPeak[static_cast<size_t>((1.0 - fap) * (nSims - 1))];
 	return kpfutils::quantile(psdPeak.begin(), psdPeak.end(), 1.0 - fap);
 }
 
@@ -463,11 +471,14 @@ double lsThreshold(const DoubleVec &times, const DoubleVec &freqs,
  * 
  * @perform O(NF × @p nSims) time, where N = @p times.size() and F = @p freqs.size()
  * @perfmore O(NF) memory
- * 
- * @exception std::domain_error Thrown if @p nSims or any element of @p freqs 
- *	is nonpositive
- * @exception std::invalid_argument Thrown if the preconditions on the 
- *	format of @p times are violated.
+ *
+ * @exception kpftimes::except::BadLightCurve Thrown if @p times has 
+ *	at most one distinct value.
+ * @exception kpfutils::except::NotSorted Thrown if @p times is not in 
+ *	ascending order.
+ * @exception kpftimes::except::NegativeFreq Thrown if some elements of @p freqs are 
+ *	negative.
+ * @exception std::invalid_argument Thrown if @p nSims is nonpositive
  * @exception std::bad_alloc Thrown if there is not enough memory to do the 
  *	calculations.
  *
@@ -527,9 +538,9 @@ void lsNormalEdf(const DoubleVec &times, const DoubleVec &freqs,
 
 	// Verify the preconditions
 	if (!diffValues) {
-		throw std::invalid_argument("Parameter 'times' in lsNormalEdf() contains only one unique date");
+		throw except::BadLightCurve("Parameter 'times' in lsNormalEdf() contains only one unique date");
 	} else if (!sortedTimes) {
-		throw std::invalid_argument("Parameter 'times' in lsNormalEdf() is not sorted in ascending order");
+		throw kpfutils::except::NotSorted("Parameter 'times' in lsNormalEdf() is not sorted in ascending order");
 	} else if (nSims < 1) {
 		try {
 			throw std::invalid_argument("Must run at least one simulation in lsNormalEdf() (gave " + lexical_cast<string>(nSims) + ")");
@@ -543,7 +554,7 @@ void lsNormalEdf(const DoubleVec &times, const DoubleVec &freqs,
 	DoubleVec om(nFreq);
 	for(i = 0; i < nFreq; i++) {
 		if(freqs[i] < 0) {
-			throw std::domain_error("Parameter 'freq' in lsThreshold() contains negative frequencies");
+			throw except::NegativeFreq("Parameter 'freq' in lsThreshold() contains negative frequencies");
 		} else {
 			om[i] = two_pi*freqs[i];
 		}

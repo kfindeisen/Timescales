@@ -2,12 +2,13 @@
  * @file timescales/freqgen.cpp
  * @author Krzysztof Findeisen
  * @date Created February 16, 2011
- * @date Last modified June 20, 2013
+ * @date Last modified November 19, 2013
  */ 
 
 #include <string>
 #include <vector>
 #include <boost/lexical_cast.hpp>
+#include "timeexcept.h"
 #include "timescales.h"
 
 namespace kpftimes {
@@ -30,7 +31,10 @@ using std::string;
  *	the time interval covered.
  * @post @p freq is sorted in ascending order
  * 
- * @exception std::invalid_argument Thrown if preconditions violated.
+ * @exception kpftimes::except::BadLightCurve Thrown if @p times has at most 
+ *	one distinct value.
+ * @exception kpfutils::except::NotSorted Thrown if @p times is not in 
+ *	ascending order.
  * 
  * @exceptsafe The function arguments are unchanged in the event 
  *	of an exception.
@@ -46,7 +50,7 @@ void freqGen(const DoubleVec &times, DoubleVec &freq) {
  * 
  * @param[in] times	Times at which data were taken
  * @param[out] freq	The returned frequency grid
- * @param[in] fMin, fMax The requested frequency range\
+ * @param[in] fMin, fMax The requested frequency range
  *
  * @pre @p times contains at least two unique values
  * @pre @p times is sorted in ascending order
@@ -57,7 +61,12 @@ void freqGen(const DoubleVec &times, DoubleVec &freq) {
  *	the time interval covered.
  * @post @p freq is sorted in ascending order
  * 
- * @exception std::invalid_argument Thrown if preconditions violated.
+ * @exception kpftimes::except::BadLightCurve Thrown if @p times has at most 
+ *	one distinct value.
+ * @exception kpfutils::except::NotSorted Thrown if @p times is not in 
+ *	ascending order.
+ * @exception kpftimes::except::NegativeRange Thrown if @p fMin &ge; @p fMax
+ * @exception std::invalid_argument Thrown if @p fMin or @p fMax is negative
  * 
  * @exceptsafe The function arguments are unchanged in the event 
  *	of an exception.
@@ -89,7 +98,13 @@ void freqGen(const DoubleVec &times, DoubleVec &freq,
  *	where T is the time interval covered.
  * @post @p freq is sorted in ascending order
  * 
- * @exception std::invalid_argument Thrown if preconditions violated.
+ * @exception kpftimes::except::BadLightCurve Thrown if @p times has at most 
+ *	one distinct value.
+ * @exception kpfutils::except::NotSorted Thrown if @p times is not in 
+ *	ascending order.
+ * @exception kpftimes::except::NegativeRange Thrown if @p fMin &ge; @p fMax
+ * @exception std::invalid_argument Thrown if @p fMin or @p fMax is negative 
+ *	or if @p fStep is non-positive
  * 
  * @exceptsafe The function arguments are unchanged in the event 
  *	of an exception.
@@ -100,11 +115,11 @@ void freqGen(const DoubleVec &times, DoubleVec &freq,
 		double fMin, double fMax, double fStep) {
 	if (fMin >= fMax) {
 		try {
-			throw std::invalid_argument("Parameter 'fMin' should be less than parameter 'fMax' in freqGen() (gave " 
+			throw except::NegativeRange("Parameter 'fMin' should be less than parameter 'fMax' in freqGen() (gave " 
 			+ lexical_cast<string>(fMin) + " for fMin and " 
 			+ lexical_cast<string>(fMax) + " for fMax)");
 		} catch (const boost::bad_lexical_cast& e) {
-			throw std::invalid_argument("Parameter 'fMin' should be less than parameter 'fMax' in freqGen()");
+			throw except::NegativeRange("Parameter 'fMin' should be less than parameter 'fMax' in freqGen()");
 		}
 	}
 	if (fMin < 0) {

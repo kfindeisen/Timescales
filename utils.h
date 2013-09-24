@@ -3,7 +3,7 @@
  * @file timescales/utils.h
  * @author Krzysztof Findeisen
  * @date Created April 13, 2011
- * @date Last modified June 17, 2013
+ * @date Last modified November 19, 2013
  */
  
 #include <stdexcept>
@@ -39,13 +39,13 @@ public:
 	
 	/** Returns the X (outer) dimension of the FastTable
 	 */
-	size_t getX();
+	size_t getX() const;
 
 	/** Returns the Y (inner) dimension of the FastTable
 	 */
-	size_t getY();
+	size_t getY() const;
 private:
-	double *table;
+	double* table;
 	const size_t dimX, dimY;
 };
 

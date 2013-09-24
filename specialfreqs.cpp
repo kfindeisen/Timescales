@@ -2,11 +2,13 @@
  * @file timescales/specialfreqs.cpp
  * @author Krzysztof Findeisen
  * @date Created April 13, 2011
- * @date Last modified June 20, 2013
+ * @date Last modified November 19, 2013
  */ 
 
 #include <vector>
 #include "../common/stats.tmp.h"
+#include "../common/stats_except.h"
+#include "timeexcept.h"
 #include "timescales.h"
 
 namespace kpftimes {
@@ -22,11 +24,14 @@ namespace kpftimes {
  * @return The pseudo-Nyquist frequency, in the inverse of whatever units 
  *	times is in.
  *
+ * @pre @p times.size() &ge; 2
  * @pre @p times contains at least two unique values
  * 
  * @perform O(N) time, where N = @p times.size()
  * 
- * @exception std::invalid_argument Thrown if preconditions violated.
+ * @exception std::invalid_argument Thrown if @p times has at most one element.
+ * @exception kpftimes::except::BadLightCurve Thrown if @p times has 
+ *	at most one distinct value.
  * 
  * @exceptsafe The function arguments are unchanged in the event 
  *	of an exception.
@@ -49,11 +54,14 @@ double pseudoNyquistFreq(const DoubleVec &times) {
  * @return The length of time between the earliest observation in times and 
  *	the latest observation in times, in whatever units @p times is in.
  *
+ * @pre @p times.size() &ge; 2
  * @pre @p times contains at least two unique values
  * 
  * @perform O(N) time, where N = @p times.size()
  * 
- * @exception std::invalid_argument Thrown if preconditions violated.
+ * @exception std::invalid_argument Thrown if @p times has at most one element.
+ * @exception kpftimes::except::BadLightCurve Thrown if @p times has 
+ *	at most one distinct value.
  * 
  * @exceptsafe The function arguments are unchanged in the event 
  *	of an exception.
@@ -86,7 +94,7 @@ double deltaT(const DoubleVec &times) {
 	}
 	
 	if (tMax <= tMin) {
-		throw std::invalid_argument("Parameter 'times' in deltaT() contains only one unique value");
+		throw except::BadLightCurve("Parameter 'times' in deltaT() contains only one unique value");
 	}
 	else {
 		return (tMax - tMin);
@@ -102,12 +110,17 @@ double deltaT(const DoubleVec &times) {
  * @return The highest meaningful frequency, in the inverse of whatever units 
  *	@p times is in.
  *
+ * @pre @p times.size() &ge; 2
  * @pre @p times contains at least two unique values
  * @pre @p times is sorted in ascending order
  * 
  * @perform O(N) time, where N = @p times.size()
  * 
- * @exception std::invalid_argument Thrown if preconditions violated.
+ * @exception std::invalid_argument Thrown if @p times has at most one element.
+ * @exception kpftimes::except::BadLightCurve Thrown if @p times has 
+ *	at most one distinct value.
+ * @exception kpfutils::except::NotSorted Thrown if @p times is not in 
+ *	ascending order.
  * 
  * @exceptsafe The function arguments are unchanged in the event 
  *	of an exception.
@@ -125,7 +138,7 @@ double maxFreq(const DoubleVec &times) {
 	// Test for sort in O(N)
 	// Faster than sorting, O(N log N), or unsorted test, O(N^2)
 	if(!kpfutils::isSorted(times.begin(), times.end())) {
-		throw std::invalid_argument("Parameter 'times' in maxFreq() is unsorted");
+		throw kpfutils::except::NotSorted("Parameter 'times' in maxFreq() is unsorted");
 	}
 
 	// Look for the smallest interval
@@ -143,7 +156,7 @@ double maxFreq(const DoubleVec &times) {
 	
 	// Report the results
 	if (minDeltaT == 0.0) {
-		throw std::invalid_argument("Parameter 'times' in maxFreq() contains only one unique value");
+		throw except::BadLightCurve("Parameter 'times' in maxFreq() contains only one unique value");
 	} else {
 		return 0.5 / minDeltaT;
 	}

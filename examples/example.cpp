@@ -1,10 +1,11 @@
-/** Brief demo of the Timescales capabilities. This program computes a single 
- *	periodogram and single autocorrelation function of an irregularly 
- *	sampled sinusoid.
+/** Brief demo of the Timescales capabilities.
  * @file examples/example.cpp
  * @author Krzysztof Findeisen
  * @date Created February 14, 2011
  * @date Last modified June 21, 2013
+ *
+ * This program computes a single periodogram and single autocorrelation 
+ * function of an irregularly sampled sinusoid.
  */
 
 #include <algorithm>
@@ -31,8 +32,7 @@ using boost::shared_ptr;
  *	containing the autocorrelation function of test.obs.txt in CSV format
  * 
  */
-int main()
-{
+int main(int argc, char* argv[]) {
 	using boost::math::double_constants::two_pi;
 	const double FREQ = 5.432;
 	const double DELT = 1.0;

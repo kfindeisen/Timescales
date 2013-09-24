@@ -2,7 +2,7 @@
  * @file timescales/tests/unit_FastTable.cpp
  * @author Krzysztof Findeisen
  * @date Created July 20, 2011
- * @date Last modified June 17, 2013
+ * @date Last modified August 21, 2013
  */
 
 #include "../../common/warnflags.h"
@@ -63,8 +63,19 @@ public:
 		}
 	}
 	
+	virtual ~FtData() {
+	}
+	
+	/** A one-element table
+	 */
 	FastTable FastTable11;
+
+	/** A fast twenty-element table
+	 */
 	FastTable FastTable45;
+
+	/** A slow twenty-element table
+	 */
 	FastTable FastTable54;
 };
 
@@ -87,20 +98,28 @@ void testCopy(FastTable& oldTable, FastTable& copyTable, size_t sizeX, size_t si
 	
 	for(size_t x = 0; x < sizeX; x++) {
 		for(size_t y = 0; y < sizeY; y++) {
-			BOOST_CHECK_EQUAL(copyTable.at(x, y), oldTable.at(x, y));
+			BOOST_CHECK_NO_THROW(
+				BOOST_CHECK_EQUAL(copyTable.at(x, y), oldTable.at(x, y)) );
 		}
 	}
 	for(size_t x = 0; x < sizeX; x++) {
 		for(size_t y = 0; y < sizeY; y++) {
-			copyTable.at(x, y) += 42.0;
+			BOOST_CHECK_NO_THROW(copyTable.at(x, y) += 42.0);
 		}
 	}
 	for(size_t x = 0; x < sizeX; x++) {
 		for(size_t y = 0; y < sizeY; y++) {
-			BOOST_CHECK_NE(copyTable.at(x, y), oldTable.at(x, y));
+			BOOST_CHECK_NO_THROW(
+				BOOST_CHECK_NE(copyTable.at(x, y), oldTable.at(x, y)) );
 		}
 	}
 }
+
+// Boost.Test uses C-style casts and non-virtual destructors
+#ifdef GNUC_FINEWARN
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Weffc++"
+#endif
 
 /** Test cases for FastTable construction and other fundamental operations 
  *	that must not rely on FtData
@@ -128,6 +147,11 @@ BOOST_AUTO_TEST_CASE(constructors) {
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+
+// Re-enable all compiler warnings
+#ifdef GNUC_FINEWARN
+#pragma GCC diagnostic pop
+#endif
 
 /** Test cases for general FastTable operations
  * 
@@ -204,22 +228,22 @@ BOOST_AUTO_TEST_CASE(copyconstruction) {
  */
 BOOST_AUTO_TEST_CASE(assignment) {
 	// This is a nontrivial test, so it's been placed in testCopy()
-		
+	
 	//@test FastTable(1, 1) = FastTable(1, 1). Expected behavior: success. Can iterate over elements with external loop and edit independently.
 	FastTable newTable1(1, 1);
-	newTable1 = FastTable11;
+	BOOST_CHECK_NO_THROW(newTable1 = FastTable11);
 	testCopy(FastTable11, newTable1, 1, 1);
 	
 	//@test FastTable(4, 5) = FastTable(4, 5). Expected behavior: success. Can iterate over elements with external loop and edit independently.
 	FastTable newTable2(4, 5);
-	newTable2 = FastTable45;
+	BOOST_CHECK_NO_THROW(newTable2 = FastTable45);
 	testCopy(FastTable45, newTable2, 4, 5);
-
-	//@test FastTable(4, 5) = FastTable(5, 4). Expected behavior: throw domain_error.
-	//@test FastTable(5, 4) = FastTable(4, 5). Expected behavior: throw domain_error.
+	
+	//@test FastTable(4, 5) = FastTable(5, 4). Expected behavior: throw invalid_argument.
+	//@test FastTable(5, 4) = FastTable(4, 5). Expected behavior: throw invalid_argument.
 	FastTable newTable3(4, 5), newTable4(5, 4);
-	BOOST_CHECK_THROW(newTable3 = FastTable54, std::domain_error);
-	BOOST_CHECK_THROW(newTable4 = FastTable45, std::domain_error);
+	BOOST_CHECK_THROW(newTable3 = FastTable54, std::invalid_argument);
+	BOOST_CHECK_THROW(newTable4 = FastTable45, std::invalid_argument);
 }
 
 /** Measures the time needed to traverse a table in y, then x
@@ -269,7 +293,10 @@ long clockSlow(FastTable& table, size_t dimX, size_t dimY) {
 /** Tests whether a FastTable allocated on the stack has faster element 
  *	access in the y direction than the x direction
  *
- * @exceptsafe Does not throw exceptions.
+ * @exception std::bad_alloc Thrown if there is not enough memory to run the test.
+ *
+ * @exceptsafe The function arguments and the test case are unchanged in 
+ *	the event of an exception.
  */
 BOOST_AUTO_TEST_CASE(stack_speed) {
 	/** @test FastTable(1000, 1000).at(x,y) = x+y±x*y iteration in both directions. 
@@ -292,7 +319,10 @@ BOOST_AUTO_TEST_CASE(stack_speed) {
 /** Tests whether a FastTable allocated on the heap has faster element 
  *	access in the y direction than the x direction
  *
- * @exceptsafe Does not throw exceptions.
+ * @exception std::bad_alloc Thrown if there is not enough memory to run the test.
+ *
+ * @exceptsafe The function arguments and the test case are unchanged in 
+ *	the event of an exception.
  */
 BOOST_AUTO_TEST_CASE(heap_speed) {
 	/** @test FastTable(1000, 1000).at(x,y) = x+y±x*y iteration in both directions. 

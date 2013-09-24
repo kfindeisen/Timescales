@@ -2,7 +2,7 @@
  * @file timescales/autocorr.cpp
  * @author Krzysztof Findeisen
  * @date Created February 16, 2011
- * @date Last modified June 19, 2013
+ * @date Last modified November 19, 2013
  */ 
 
 #include <complex>
@@ -13,6 +13,7 @@
 #include <boost/smart_ptr.hpp>
 #include <gsl/gsl_fft_halfcomplex.h>
 #include "dft.h"
+#include "timeexcept.h"
 #include "timescales.h"
 #include "../common/alloc.tmp.h"
 #include "../common/stats.tmp.h"
@@ -48,8 +49,15 @@ using kpfutils::checkAlloc;
  * 
  * @perform O(FN) time, where N = @p times.size() and F = @p offsets.size()
  *
- * @exception std::invalid_argument Thrown if the preconditions on @p times, 
- *	@p offsets, or @p length(fluxes) are violated.
+ * @exception kpftimes::except::BadLightCurve Thrown if @p times has at most 
+ *	one distinct value.
+ * @exception kpfutils::except::NotSorted Thrown if @p times is not in 
+ *	ascending order.
+ * @exception kpftimes::except::NegativeFreq Thrown if some offsets are 
+ *	negative.
+ * @exception std::invalid_argument Thrown if @p times and @p fluxes have 
+ *	different lengths, if @p offsets has at most one distinct value, or if 
+ *	it is not uniformly sampled.
  * @exception std::bad_alloc Thrown if there is not enough memory to perform 
  *	the calculations.
  *
@@ -82,11 +90,6 @@ void autoCorr(const DoubleVec &times, const DoubleVec &fluxes,
  * @note Increasing maxFreq will increase the time resolution of acf at the 
  *	cost of making the entire function noisier.
  * 
- * @warning This version of autoCorr is highly volatile and may be removed 
- *	from the library in future versions. I recommend its use only for 
- *	testing of the autocorrelation algorithm. Wherever possible, use 
- *	autoCorr(), which has a stable (or at least forward-compatible) spec.
- *
  * @pre @p times contains at least two unique values
  * @pre @p times is sorted in ascending order
  * @pre @p fluxes.size() = @p times.size()
@@ -102,8 +105,15 @@ void autoCorr(const DoubleVec &times, const DoubleVec &fluxes,
  * 
  * @perform O(FN) time, where N = @p times.size() and F = @p offsets.size()
  *
- * @exception std::invalid_argument Thrown if the preconditions on @p times, 
- *	@p offsets, or @p length(fluxes) are violated.
+ * @exception kpftimes::except::BadLightCurve Thrown if @p times has at most 
+ *	one distinct value.
+ * @exception kpfutils::except::NotSorted Thrown if @p times is not in 
+ *	ascending order.
+ * @exception kpftimes::except::NegativeFreq Thrown if some offsets are 
+ *	negative.
+ * @exception std::invalid_argument Thrown if @p times and @p fluxes have 
+ *	different lengths, if @p offsets has at most one distinct value, if 
+ *	it is not uniformly sampled, or if @p maxFreq is non-positive.
  * @exception std::bad_alloc Thrown if there is not enough memory to perform 
  *	the calculations.
  *
@@ -142,9 +152,9 @@ void autoCorr(const DoubleVec &times, const DoubleVec &fluxes,
 	
 	// Verify the preconditions
 	if (!diffValues) {
-		throw std::invalid_argument("Argument 'times' to autoCorr() contains only one unique value");
+		throw except::BadLightCurve("Argument 'times' to autoCorr() contains only one unique value");
 	} else if (!sortedTimes) {
-		throw std::invalid_argument("Argument 'times' to autoCorr()  is not sorted in ascending order");
+		throw kpfutils::except::NotSorted("Argument 'times' to autoCorr()  is not sorted in ascending order");
 	} else if (fluxes.size() != nTimes) {
 		try {
 			throw std::invalid_argument("Arguments 'times' and 'fluxes' to autoCorr() are not the same length (gave " 
@@ -169,7 +179,7 @@ void autoCorr(const DoubleVec &times, const DoubleVec &fluxes,
 		throw std::invalid_argument("autoCorr(): first element of offsets must be zero (for now)");
 	}
 	if (offsets[0] < 0.0 || offsets[1] < 0.0) {
-		throw std::invalid_argument("autoCorr(): offsets must be nonnegative");
+		throw except::NegativeFreq("autoCorr(): offsets must be nonnegative");
 	}
 	double offSpace = offsets[1] - offsets[0];
 	if (offSpace <= 0.0) {
@@ -177,7 +187,7 @@ void autoCorr(const DoubleVec &times, const DoubleVec &fluxes,
 	}
 	for(size_t i = 2; i < nOutput; i++) {
 		if (offsets[i] < 0.0 || offsets[i] <= offsets[i-1]) {
-			throw std::invalid_argument("autoCorr(): offsets must be nonnegative");
+			throw except::NegativeFreq("autoCorr(): offsets must be nonnegative");
 		}
 		if (offsets[i] <= offsets[i-1]) {
 			throw std::invalid_argument("autoCorr(): offsets must be in ascending order");
@@ -312,10 +322,18 @@ void autoCorr(const DoubleVec &times, const DoubleVec &fluxes,
  * 
  * @perform O(FN) time, where N = @p times.size() and F = @p offsets.size()
  * 
- * @exception std::invalid_argument Thrown if the preconditions on @p times 
- *	or @p offsets are violated.
+ * @exception kpftimes::except::BadLightCurve Thrown if @p times has at most 
+ *	one distinct value.
+ * @exception kpfutils::except::NotSorted Thrown if @p times is not in 
+ *	ascending order.
+ * @exception kpftimes::except::NegativeFreq Thrown if some offsets are 
+ *	negative.
+ * @exception std::invalid_argument Thrown if @p offsets has at most one 
+ *	distinct value, or if it is not uniformly sampled.
  * @exception std::bad_alloc Thrown if there is not enough memory to perform 
  *	the calculations.
+ *
+ * @exceptsafe The function arguments are unchanged in the event of an exception.
  *
  * @todo Verify that input validation is worth the cost
  */
@@ -332,11 +350,6 @@ void acWindow(const DoubleVec &times, const DoubleVec &offsets, DoubleVec &wf) {
  *			the autocorrelation function.
  * @param[out] wf	The value of the window function at each offset.
  *
- * @warning This version of acWindow is highly volatile and may be removed 
- *	from the library in future versions. I recommend its use only for 
- *	testing of the autocorrelation algorithm. Wherever possible, use 
- *	acWindow(), which has a stable (or at least forward-compatible) spec.
- *
  * @pre @p times contains at least two unique values
  * @pre @p times is sorted in ascending order
  * @pre @p offsets contains at least two unique elements
@@ -350,10 +363,19 @@ void acWindow(const DoubleVec &times, const DoubleVec &offsets, DoubleVec &wf) {
  * 
  * @perform O(FN) time, where N = @p times.size() and F = @p offsets.size()
  * 
- * @exception std::invalid_argument Thrown if the preconditions on @p times, 
- *	@p offsets, or @p maxFreq are violated.
+ * @exception kpftimes::except::BadLightCurve Thrown if @p times has at most 
+ *	one distinct value.
+ * @exception kpfutils::except::NotSorted Thrown if @p times is not in 
+ *	ascending order.
+ * @exception kpftimes::except::NegativeFreq Thrown if some offsets are 
+ *	negative.
+ * @exception std::invalid_argument Thrown if @p offsets has at most one 
+ *	distinct value, if it is not uniformly sampled, or if @p maxFreq is 
+ *	non-negative.
  * @exception std::bad_alloc Thrown if there is not enough memory to perform 
  *	the calculations.
+ *
+ * @exceptsafe The function arguments are unchanged in the event of an exception.
  *
  * @todo Verify that input validation is worth the cost
  * @todo Prove performance
@@ -382,9 +404,9 @@ void acWindow(const DoubleVec &times, const DoubleVec &offsets, DoubleVec &wf,
 	
 	// Verify the preconditions
 	if (!diffValues) {
-		throw std::invalid_argument("Argument 'times' to acWindow() contains only one unique value");
+		throw except::BadLightCurve("Argument 'times' to acWindow() contains only one unique value");
 	} else if (!sortedTimes) {
-		throw std::invalid_argument("Argument 'times' to acWindow()  is not sorted in ascending order");
+		throw kpfutils::except::NotSorted("Argument 'times' to acWindow() is not sorted in ascending order");
 	} else if (maxFreq <= 0.0) {
 		try {
 			throw std::invalid_argument("Argument 'maxFreq' to acWindow() must be positive (gave " 
@@ -401,7 +423,7 @@ void acWindow(const DoubleVec &times, const DoubleVec &offsets, DoubleVec &wf,
 		throw std::invalid_argument("acWindow(): first element of offsets must be zero (for now)");
 	}
 	if (offsets[0] < 0.0 || offsets[1] < 0.0) {
-		throw std::invalid_argument("acWindow(): offsets must be nonnegative");
+		throw except::NegativeFreq("acWindow(): offsets must be nonnegative");
 	}
 	double offSpace = offsets[1] - offsets[0];
 	if (offSpace <= 0.0) {
@@ -409,7 +431,7 @@ void acWindow(const DoubleVec &times, const DoubleVec &offsets, DoubleVec &wf,
 	}
 	for(size_t i = 2; i < nOutput; i++) {
 		if (offsets[i] < 0.0 || offsets[i] <= offsets[i-1]) {
-			throw std::invalid_argument("acWindow(): offsets must be nonnegative");
+			throw except::NegativeFreq("acWindow(): offsets must be nonnegative");
 		}
 		if (offsets[i] <= offsets[i-1]) {
 			throw std::invalid_argument("acWindow(): offsets must be in ascending order");
