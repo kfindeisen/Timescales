@@ -2,9 +2,7 @@
  *  @file timescales.h
  *  @author Krzysztof Findeisen
  *  @date Created January 25, 2010
- *  @date Last modified June 21, 2013
- *
- * @todo Fix any bugs related to the \@overload documentation tag
+ *  @date Last modified October 29, 2013
  */
  
 /** @mainpage
@@ -21,7 +19,10 @@
  * into pipelines.
  * 
  * @section metahelp About this Documentation
- * 
+ *
+ * Instructions for building and installing the Timescales library can be 
+ * found in the @htmlonly Installation section of the Related Pages tab at the 
+ * top of this page @endhtmlonly @latexonly Installation chapter @endlatexonly. 
  * New users will find the @htmlonly Modules tab at the top of this page @endhtmlonly 
  * @latexonly Module Documentation chapter @endlatexonly the best 
  * starting point for learning about the Timescales API. There they will find 
@@ -31,11 +32,9 @@
  *
  * @section credits Credits
  *
- * Lightcurve MC was primarily written by Krzysztof Findeisen. Please contact 
- * him at krzys, astro caltech edu for questions, feedback, or bug reports.
+ * The Timescales library was primarily written by Krzysztof Findeisen. Please 
+ * contact him at krzys, astro caltech edu for questions, feedback, or bug reports.
  * 
- * @page install Installation
- *
  * @page install Installation
  *
  * @section install_reqs Requirements
@@ -54,7 +53,7 @@
  * The library may switch to CMake in the future for improved portability.
  *
  * Timescales depends on the following external libraries:
- * - <a href="http://www.boost.org/">Boost</a> 1.31 or later
+ * - <a href="http://www.boost.org/">Boost</a> 1.33 or later
  * - <a href="http://www.gnu.org/software/gsl/">Gnu Scientific Library (GSL)</a> 
  *	1.3 or later
  * 
@@ -87,8 +86,6 @@
  * The library depends on Boost only through template headers, so you do not 
  * need to link against any Boost libraries.
  * 
- * @page use User's Guide
- * 
  * @page changelog Version History
  *
  * @brief <b></b>
@@ -98,9 +95,9 @@
  * All version numbers are to be interpreted as described therein. 
  * This documentation constitutes the public API for the library.
  *
- * @section v04 0.4.0-devel
+ * @section v1_0_0 1.0.0-devel
  *
- * @subsection v0_4_0_diff Changes 
+ * @subsection v1_0_0_diff Changes 
  * 
  * - From now on, version numbers will conform to 
  *	<a href="http://semver.org/spec/v2.0.0.html">version 2.0.0 of the Semantic Versioning specification</a>.
@@ -108,21 +105,25 @@
  * - Improved quality of documentation
  * - Improved quality of source code. All functions are now exception-safe.
  * - Removed the SCARGLE_SLOW compile-time option
- * - Wrote more informative exception strings
+ * - Reorganized exception specifications: problems with input that can be 
+ *	worked around now throw library-specific exceptions, while those that 
+ *	can't now throw @c std::invalid_argument. Exception text is now more 
+ *	specific and informative.
  * 
- * @subsection v0_4_0_new New Features 
+ * @subsection v1_0_0_new New Features 
  * 
+ * - Added functions for analyzing &Delta;m&Delta;t plots
  * 
- * @subsection v0_4_0_fix Bug Fixes 
+ * @subsection v1_0_0_fix Bug Fixes 
  * 
  * - autoCorr() and acWindow() now correctly test whether the input time 
  *	lag grid is uniform
  * 
- * @section v03 0.3
+ * @section v0_3 0.3
  *
  * No version information recorded.
  *
- * @section v022 0.2.2
+ * @section v0_2_2 0.2.2
  *
  * @subsection v0_2_2_diff Changes
  * 
@@ -132,7 +133,7 @@
  * 
  * - Added delMDelT()
  *
- * @section v021 0.2.1
+ * @section v0_2_1 0.2.1
  *
  * @subsection v0_2_1_new New Features 
  * 
@@ -142,6 +143,20 @@
 
 #ifndef TIMESCALEH
 #define TIMESCALEH
+
+/** Current version of the library, for compatibility requirements.
+ *
+ * @internal "+build" tag can be used to distinguish which development 
+ *	version was used to create which output
+ */
+#define TIMESCALES_VERSION_STRING "1.0.0"
+
+/** Machine-readable version information
+ */
+#define TIMESCALES_MAJOR_VERSION 1
+/** Machine-readable version information
+ */
+#define TIMESCALES_MINOR_VERSION 0
 
 #include <stdexcept>
 #include <vector>
@@ -211,7 +226,19 @@ void acWindow(const DoubleVec &times, const DoubleVec &offsets, DoubleVec &wf,
  */
 void dmdt(const DoubleVec &times, const DoubleVec &fluxes, 
 		DoubleVec &deltaT, DoubleVec &deltaM);
- 
+
+/** Computes the fraction of pairs of magnitudes above some threshold found 
+ *	in each &Delta;t bin of a &Delta;m&Delta;t plot.
+ */
+void hiAmpBinFrac(const DoubleVec &deltaT, const DoubleVec &deltaM, 
+		const DoubleVec &binEdges, DoubleVec &fracs, double threshold);
+
+/** Computes the quantile of pairs of magnitudes found in each &Delta;t bin 
+ *	of a &Delta;m&Delta;t plot.
+ */
+void deltaMBinQuantile(const DoubleVec &deltaT, const DoubleVec &deltaM, 
+		const DoubleVec &binEdges, DoubleVec &quants, double q);
+
 /** @} */	// end &Delta;m&Delta;t generation
 
 //----------------------------------------------------------
@@ -234,17 +261,11 @@ double maxFreq(const DoubleVec &times);
 /** Creates a frequency grid that can be fed to time series analysis 
  * functions. 
  */
-void freqGen(const DoubleVec &times, DoubleVec &freq);
-
-/** @overload 
- */
-void freqGen(const DoubleVec &times, DoubleVec &freq, 
-		double fMin, double fMax);
-
-/** @overload 
- */
 void freqGen(const DoubleVec &times, DoubleVec &freq, 
 		double fMin, double fMax, double fStep);
+void freqGen(const DoubleVec &times, DoubleVec &freq, 
+		double fMin, double fMax);
+void freqGen(const DoubleVec &times, DoubleVec &freq);
 
 /** @} */	// end Frequency/offset grid generation
 
