@@ -64,6 +64,7 @@ using kpfutils::checkAlloc;
  *
  * @exceptsafe The function arguments are unchanged in the event of an exception
  * 
+ * @todo Factor this function
  * @todo Find a faster algorithm
  * @todo Optimize for multiple calls with similar (but not identical) values 
  *	of @p times and @p freqs, as would happen in a large survey where some 
@@ -256,6 +257,7 @@ void lombScargle(const DoubleVec &times, const DoubleVec &data,
  * 
  * @exceptsafe The function arguments are unchanged in the event of an exception
  *
+ * @todo Factor this function
  * @todo Test the performance advantage AFTER refactoring
  * @todo Verify that input validation is worth the cost
  */
@@ -513,6 +515,8 @@ double lsThreshold(const DoubleVec &times, const DoubleVec &freqs,
  *	running lombScargle 100 times.
  * @test A 100-element nonuniformly sampled time series, unsorted. Expected 
  *	behavior = throw invalid_argument.
+ *
+ * @todo Factor this function
  */
 void lsNormalEdf(const DoubleVec &times, const DoubleVec &freqs, 
 		DoubleVec &powers, DoubleVec &probs, long nSims) {

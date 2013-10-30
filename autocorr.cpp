@@ -121,7 +121,7 @@ void autoCorr(const DoubleVec &times, const DoubleVec &fluxes,
  *
  * @todo Verify that input validation is worth the cost
  * @todo Prove performance
- * @todo Break up this function.
+ * @todo Factor this function
  */
 void autoCorr(const DoubleVec &times, const DoubleVec &fluxes, 
 		const DoubleVec &offsets, DoubleVec &acf, double maxFreq) {
@@ -379,7 +379,7 @@ void acWindow(const DoubleVec &times, const DoubleVec &offsets, DoubleVec &wf) {
  *
  * @todo Verify that input validation is worth the cost
  * @todo Prove performance
- * @todo Break up this function.
+ * @todo Factor this function
  */
 void acWindow(const DoubleVec &times, const DoubleVec &offsets, DoubleVec &wf, 
 		double maxFreq) {

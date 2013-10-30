@@ -61,7 +61,6 @@ void dft(const DoubleVec &times, const DoubleVec &fluxes,
 	 * This will later become the reference implementation when I try to 
 	 *	replace this with something more subtle
 	 */
-
 	using boost::math::double_constants::two_pi;
 	const static std::complex<double> I(0.0, 1.0);
 	
@@ -100,7 +99,7 @@ void dft(const DoubleVec &times, const DoubleVec &fluxes,
 	for(size_t i = 0; i < nFreqs; i++) {
 		double omega = two_pi * freqs[i];
 		for(size_t j = 0; j < nTimes; j++) {
-			dft[i] += fluxes[j] * exp(-I * omega * times[j]);
+			tempDft[i] += fluxes[j] * exp(-I * omega * times[j]);
 		}
 	}
 	

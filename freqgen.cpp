@@ -16,9 +16,7 @@ namespace kpftimes {
 using boost::lexical_cast;
 using std::string;
 
-/** Creates a frequency grid that can be fed to time series analysis 
- * functions. The grid itself is trivial to compute; this function therefore 
- * exists mainly as a convenient wrapper for the most commonly needed grids.
+/** @copybrief kpftimes::freqGen(const DoubleVec&,DoubleVec&,double,double,double)
  * 
  * @param[in] times	Times at which data were taken
  * @param[out] freq	The new frequency grid
@@ -44,9 +42,7 @@ void freqGen(const DoubleVec &times, DoubleVec &freq) {
 	freqGen(times, freq, 0.0, pseudoNyquistFreq(times), 0.5);
 }
 
-/** Creates a frequency grid that can be fed to time series analysis 
- * functions. The grid itself is trivial to compute; this function therefore 
- * exists mainly as a convenient wrapper for the most commonly needed grids.
+/** @copybrief kpftimes::freqGen(const DoubleVec&,DoubleVec&,double,double,double)
  * 
  * @param[in] times	Times at which data were taken
  * @param[out] freq	The returned frequency grid
@@ -78,8 +74,7 @@ void freqGen(const DoubleVec &times, DoubleVec &freq,
 }
 
 /** Creates a frequency grid that can be fed to time series analysis 
- * functions. The grid itself is trivial to compute; this function therefore 
- * exists mainly as a convenient wrapper for the most commonly needed grids.
+ * functions.
  * 
  * @param[in] times	Times at which data were taken
  * @param[out] freq	The returned frequency grid
