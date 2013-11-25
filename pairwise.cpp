@@ -124,8 +124,8 @@ void dmdt(const DoubleVec &times, const DoubleVec &mags,
  *	in which to count high-&Delta;m pairs.
  * @param[out] fracs A vector containing the fraction of &Delta;m values in 
  *	each bin that exceed threshold.
- * @param[in] threshold The characteristic magnitude difference above which 
- *	&Delta;m values are to be counted.
+ * @param[in] threshold The characteristic magnitude difference, in magnitudes, 
+ *	above which &Delta;m values are to be counted.
  *
  * @pre @p deltaT.size() = @p deltaM.size()
  * @pre @p deltaT is sorted in ascending order

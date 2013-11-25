@@ -83,7 +83,7 @@ BOOST_CONCEPT_ASSERT((boost::UnaryPredicate<FartherThan, double>));
  *	or maximum in (@p times, @p data)
  * @post for all i in @p peakTimes except the first two and last single elements, 
  *	if @p peakTimes[i] is a local minimum in (@p times, @p data), then 
- *	@p peakTimes[k-1] is a local maximum, and if @p peakTimes[i] is a local 
+ *	@p peakTimes[i-1] is a local maximum, and if @p peakTimes[i] is a local 
  *	maximum, then @p peakTimes[i] is a local minimum
  * @post for all i in @p peakTimes except the first element, @p peakHeights[i] 
  *	differs from @p peakHeights[i-1] by at least @p minAmp

@@ -1,7 +1,7 @@
 # Compilation make for timescales.lib / libtimescales.a
 # by Krzysztof Findeisen
 # Created March 18, 2010
-# Last modified October 29, 2013
+# Last modified October 30, 2013
 
 include makefile.inc
 
@@ -16,8 +16,8 @@ ALGTYPE  :=
 # Select all files
 PROJ        := timescales
 PROJ        := lib$(PROJ).a
-SOURCES     := autocorr.cpp dft.cpp freqgen.cpp pairwise.cpp peakfind.cpp scargle.cpp \
-	specialfreqs.cpp utils.cpp \
+SOURCES     := autocorr.cpp dft.cpp pairwise.cpp peakfind.cpp scargle.cpp \
+	freqgen.cpp specialfreqs.cpp utils.cpp \
 	baddata.cpp badoption.cpp
 OBJS        :=     $(SOURCES:.cpp=.o)
 
