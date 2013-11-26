@@ -2,7 +2,7 @@
  * @file timescales/dft.cpp
  * @author Krzysztof Findeisen
  * @date Created February 13, 2011
- * @date Last modified November 18, 2013
+ * @date Last modified November 25, 2013
  */ 
 
 #include <algorithm>
@@ -12,6 +12,7 @@
 #include <vector>
 #include <boost/lexical_cast.hpp>
 #include <boost/math/constants/constants.hpp>
+#include <boost/version.hpp>
 #include "dft.h"
 #include "../common/stats_except.h"
 #include "timeexcept.h"
@@ -57,13 +58,17 @@ using boost::lexical_cast;
  */
 void dft(const DoubleVec &times, const DoubleVec &fluxes, 
 		const DoubleVec &freqs, ComplexVec &dft) {
+	#if BOOST_VERSION >= 105000
+	using boost::math::double_constants::pi;
+	#elif BOOST_VERSION >= 103500
+	const static double pi = boost::math::constants::pi<double>();
+	#endif
+	const static std::complex<double> I(0.0, 1.0);
+	
 	/* This is a brute-force implementation, with no attempt at efficiency
 	 * This will later become the reference implementation when I try to 
 	 *	replace this with something more subtle
 	 */
-	using boost::math::double_constants::two_pi;
-	const static std::complex<double> I(0.0, 1.0);
-	
 	size_t nTimes = times.size();
 	size_t nFreqs = freqs.size();
 	
@@ -97,7 +102,7 @@ void dft(const DoubleVec &times, const DoubleVec &fluxes,
 	ComplexVec tempDft(nFreqs, 0.0);
 
 	for(size_t i = 0; i < nFreqs; i++) {
-		double omega = two_pi * freqs[i];
+		double omega = 2.0 * pi * freqs[i];
 		for(size_t j = 0; j < nTimes; j++) {
 			tempDft[i] += fluxes[j] * exp(-I * omega * times[j]);
 		}

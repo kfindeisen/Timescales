@@ -2,7 +2,7 @@
  * @file timescales/scargle.cpp
  * @author Krzysztof Findeisen
  * @date Derived from scargle.pro (by Joern Wilms et al.) January 25, 2010
- * @date Last modified November 19, 2013
+ * @date Last modified November 25, 2013
  */ 
 
 #include <algorithm>
@@ -12,6 +12,7 @@
 #include <cmath>
 #include <boost/lexical_cast.hpp>
 #include <boost/math/constants/constants.hpp>
+#include <boost/version.hpp>
 #include <boost/smart_ptr.hpp>
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>
@@ -25,9 +26,14 @@ namespace kpftimes {
 
 using std::string;
 using boost::lexical_cast;
-using boost::math::double_constants::two_pi;
 using boost::shared_ptr;
 using kpfutils::checkAlloc;
+
+#if BOOST_VERSION >= 105000
+using boost::math::double_constants::pi;
+#elif BOOST_VERSION >= 103500
+const double pi = boost::math::constants::pi<double>();
+#endif
 
 /** Calculates the Lomb-Scargle periodogram for a time series.
  * 
@@ -121,7 +127,7 @@ void lombScargle(const DoubleVec &times, const DoubleVec &data,
 		if(freqs[i] < 0) {
 			throw except::NegativeFreq("Parameter 'freqs' in lombScargle() contains negative frequencies");
 		} else {
-			om[i] = two_pi*freqs[i];
+			om[i] = 2.0 * pi*freqs[i];
 		}
 	}
 
@@ -311,7 +317,7 @@ double lsThreshold(const DoubleVec &times, const DoubleVec &freqs,
 		if(freqs[i] < 0) {
 			throw except::NegativeFreq("Parameter 'freqs' in lsThreshold() contains negative frequencies");
 		} else {
-			om[i] = two_pi*freqs[i];
+			om[i] = 2.0 * pi*freqs[i];
 		}
 	}
 
@@ -560,7 +566,7 @@ void lsNormalEdf(const DoubleVec &times, const DoubleVec &freqs,
 		if(freqs[i] < 0) {
 			throw except::NegativeFreq("Parameter 'freq' in lsThreshold() contains negative frequencies");
 		} else {
-			om[i] = two_pi*freqs[i];
+			om[i] = 2.0 * pi*freqs[i];
 		}
 	}
 

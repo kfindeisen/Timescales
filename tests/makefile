@@ -1,7 +1,7 @@
 # Compilation make for timescales test driver
 # by Krzysztof Findeisen
 # Created June 14, 2013
-# Last modified October 29, 2013
+# Last modified November 25, 2013
 
 include ../makefile.inc
 
@@ -10,7 +10,7 @@ include ../makefile.inc
 PROJ    := test
 SOURCES := driver.cpp unit_lsNormalEdf.cpp unit_FastTable.cpp unit_peaks.cpp
 OBJS    := $(SOURCES:.cpp=.o)
-LIBS    := kpfutils gsl boost_unit_test_framework-mt 
+LIBS    := kpfutils gsl gslcblas boost_unit_test_framework-mt 
 
 #---------------------------------------
 # Primary build option

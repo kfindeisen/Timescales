@@ -21,7 +21,6 @@ namespace kpftimes {
 
 using std::string;
 using boost::lexical_cast;
-using boost::math::double_constants::two_pi;
 
 /** Calculates a &Delta;m&Delta;t plot.
  * 

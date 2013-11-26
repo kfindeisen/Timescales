@@ -2,7 +2,7 @@
  * @file timescales/tests/unit_peaks.cpp
  * @author Krzysztof Findeisen
  * @date Created April 18, 2013
- * @date Last modified October 29, 2013
+ * @date Last modified November 25, 2013
  */
 
 #include "../../common/warnflags.h"
@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_SUITE(test_peaks)
  *
  */
 BOOST_AUTO_TEST_CASE(peakfind) {
-	for(size_t i = 0; i <= 13; i++) {
+	for(int i = 0; i <= 13; i++) {
 		vector<double> times, mags;
 		vector<double> peakTimes, peaks;
 		
