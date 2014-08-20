@@ -2,7 +2,7 @@
  *  @file timescales.h
  *  @author Krzysztof Findeisen
  *  @date Created January 25, 2010
- *  @date Last modified October 29, 2013
+ *  @date Last modified February 28, 2014
  */
  
 /** @mainpage
@@ -18,22 +18,34 @@
  * defined task, making it (hopefully!) easy to chain functions together 
  * into pipelines.
  * 
- * @section metahelp About this Documentation
- *
- * Instructions for building and installing the Timescales library can be 
- * found in the @htmlonly Installation section of the Related Pages tab at the 
- * top of this page @endhtmlonly @latexonly Installation chapter @endlatexonly. 
- * New users will find the @htmlonly Modules tab at the top of this page @endhtmlonly 
- * @latexonly Module Documentation chapter @endlatexonly the best 
- * starting point for learning about the Timescales API. There they will find 
- * a list of the main functions in the library, organized by category. The 
- * other @htmlonly tabs @endhtmlonly @latexonly chapters @endlatexonly 
- * are more useful for people seeking to understand the code itself.
+ * @section legal License
+ * 
+ * Copyright (C) 2014 California Institute of Technology
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version, subject to the following 
+ * exception added under Section 7 of the License:
+ *	* Neither the name of the copyright holder nor the names of its contributors 
+ *	  may be used to endorse or promote products derived from this software 
+ *	  without specific prior written permission.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License 
+ * in <a href="../../LICENSE">timescales/LICENSE</a> 
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @section credits Credits
  *
- * The Timescales library was primarily written by Krzysztof Findeisen. Please 
- * contact him at krzys, astro caltech edu for questions, feedback, or bug reports.
+ * The Timescales library was primarily written by Krzysztof Findeisen, 
+ * although it includes C++ translations of IDL code written by Jörn Wilms 
+ * and Ann Marie Cody. Please email krzys, astro caltech edu for questions, 
+ * feedback, or bug reports.
  * 
  * @page install Installation
  *
@@ -95,7 +107,7 @@
  * All version numbers are to be interpreted as described therein. 
  * This documentation constitutes the public API for the library.
  *
- * @section v1_0_0 1.0.0-devel
+ * @section v1_0_0 1.0.0
  *
  * @subsection v1_0_0_diff Changes 
  * 
@@ -113,6 +125,7 @@
  * @subsection v1_0_0_new New Features 
  * 
  * - Added functions for analyzing &Delta;m&Delta;t plots
+ * - Added functions for peak-finding plots
  * 
  * @subsection v1_0_0_fix Bug Fixes 
  * 
@@ -171,6 +184,15 @@ namespace kpftimes {
 
 //----------------------------------------------------------
 /** @defgroup period Periodogram generation
+ *
+ * Support for Lomb-Scargle Periodograms
+ *
+ * Implements periodograms following @cite LSPeriodogram. The implementation 
+ * is based on the IDL function scargle.pro, maintained by Joern Wilms et al. 
+ * as part of the IDL Astronomy Users Library. The Astronomy Users Library, 
+ * available at http://idlastro.gsfc.nasa.gov/, is released under a BSD-2 
+ * license.
+ *
  *  @{
  */
  
@@ -193,6 +215,12 @@ void lsNormalEdf(const DoubleVec &times, const DoubleVec &freqs,
 
 //----------------------------------------------------------
 /** @defgroup acf Autocorrelation function generation
+ *
+ * Support for Scargle autocorrelation functions
+ *
+ * Implements autocorrelation functions following the algorithm 
+ * of @cite ScargleAcf.
+ *
  *  @{
  */
  
@@ -219,6 +247,12 @@ void acWindow(const DoubleVec &times, const DoubleVec &offsets, DoubleVec &wf,
 
 //----------------------------------------------------------
 /** @defgroup dmdt &Delta;m&Delta;t pair diagram generation
+ *
+ * Support for &Delta;m&Delta;t plots.
+ *
+ * Brute-force implementation of &Delta;m&Delta;t plots. Also provides 
+ * functions for basic &Delta;m&Delta;t summary statistics.
+ *
  *  @{
  */
 
@@ -243,6 +277,13 @@ void deltaMBinQuantile(const DoubleVec &deltaT, const DoubleVec &deltaM,
 
 //----------------------------------------------------------
 /** @defgroup peak peak-finding diagram generation
+ *
+ * Support for peak-finding plots.
+ *
+ * The basic concept behind peak-finding is described in @cite PeakFind, 
+ * although this implementation is based on an older version of Cody et 
+ * al.'s algorithm.
+ *
  *  @{
  */
 
@@ -262,6 +303,9 @@ void peakFindTimescales(const DoubleVec& times, const DoubleVec& data,
 
 //----------------------------------------------------------
 /** @defgroup grid Frequency/offset grid generation
+ *
+ * Functions for quickly generating grids of parameters
+ *
  *  @{
  */
  

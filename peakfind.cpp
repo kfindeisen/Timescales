@@ -1,9 +1,31 @@
-/** Port of Ann Marie's count.pro to a C++ function
+/** Identifies local minima and maxima meeting an amplitude threshold
  * @file timescales/peakfind.cpp
- * @author Ann Marie Cody
+ * @author Based on @c count.pro by Ann Marie Cody. Used with permission.
  * @author Krzysztof Findeisen
- * @date Created May 14, 2013
+ * @date Derived from @c count.pro May 14, 2013
  * @date Last modified August 29, 2013
+ */
+
+/* Copyright 2014, California Institute of Technology.
+ *
+ * This file is part of the Timescales library.
+ * 
+ * The Timescales library is free software: you can redistribute it and/or 
+ * modify it under the terms of the GNU General Public License as published 
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version, subject to the following 
+ * exception added under Section 7 of the License:
+ *	* Neither the name of the copyright holder nor the names of its contributors 
+ *	  may be used to endorse or promote products derived from this software 
+ *	  without specific prior written permission.
+ * 
+ * The Timescales library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with the Timescales library. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <algorithm>
@@ -84,7 +106,7 @@ BOOST_CONCEPT_ASSERT((boost::UnaryPredicate<FartherThan, double>));
  * @post for all i in @p peakTimes except the first two and last single elements, 
  *	if @p peakTimes[i] is a local minimum in (@p times, @p data), then 
  *	@p peakTimes[i-1] is a local maximum, and if @p peakTimes[i] is a local 
- *	maximum, then @p peakTimes[i] is a local minimum
+ *	maximum, then @p peakTimes[i-1] is a local minimum
  * @post for all i in @p peakTimes except the first element, @p peakHeights[i] 
  *	differs from @p peakHeights[i-1] by at least @p minAmp
  * @post for all points in (times, data) that are not in (@p peakTimes, @p peakHeights), 
@@ -102,6 +124,8 @@ BOOST_CONCEPT_ASSERT((boost::UnaryPredicate<FartherThan, double>));
  *
  * @exceptsafe The function parameters are unchanged in the event of 
  *	an exception.
+ *
+ * @todo Update implementation to match final version in @cite PeakFind
  */
 void peakFind(const DoubleVec& times, const DoubleVec& data, 
 		double minAmp, DoubleVec& peakTimes, DoubleVec& peakHeights) {

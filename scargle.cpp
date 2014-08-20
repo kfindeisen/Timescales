@@ -1,9 +1,32 @@
 /** Computes the Lomb-Scargle periodogram of an unevenly sampled lightcurve
  * @file timescales/scargle.cpp
+ * @author Based on version 1.7 of <code>[scargle.pro](http://astro.uni-tuebingen.de/software/idl/aitlib/timing/scargle.html)</code> by Jörn Wilms, freely distributed as part of the [IAAT Astronomy IDL Library](http://astro.uni-tuebingen.de/software/idl/aitlib/)
  * @author Krzysztof Findeisen
- * @date Derived from scargle.pro (by Joern Wilms et al.) January 25, 2010
+ * @date Derived from @c scargle.pro January 25, 2010
  * @date Last modified November 25, 2013
  */ 
+
+/* Copyright 2014, California Institute of Technology.
+ *
+ * This file is part of the Timescales library.
+ * 
+ * The Timescales library is free software: you can redistribute it and/or 
+ * modify it under the terms of the GNU General Public License as published 
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version, subject to the following 
+ * exception added under Section 7 of the License:
+ *	* Neither the name of the copyright holder nor the names of its contributors 
+ *	  may be used to endorse or promote products derived from this software 
+ *	  without specific prior written permission.
+ * 
+ * The Timescales library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with the Timescales library. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include <algorithm>
 #include <string>
